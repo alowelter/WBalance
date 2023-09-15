@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/alowelter/WBalance#readme",
   "dependencies": {
+    "axios": "^1.5.0",
     "dotenv": "^16.3.1",
     "http": "^0.0.1-security",
     "http-proxy": "^1.18.1",

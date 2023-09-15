@@ -1,6 +1,7 @@
-const http = require('http');
-const https = require('https');
+const useHttp = require('http');
+const useHttps = require('https');
 const httpProxy = require('http-proxy');
+const axios = require('axios');
 const fs = require('fs');
 const os = require('os');
 
@@ -16,8 +17,43 @@ if (os.platform() != 'linux') {
     return;
 }
 
+axios
+    .get('https://api.vultr.com/v2/instances', {
+        headers: {
+            Authorization: `Bearer ${process.env.VULTR_API_KEY}`,
+        },
+    })
+    .then((response) => {
+        console.log('Resposta da API da Vultr:');
+        console.log(response.data);
+    })
+    .catch((error) => {
+        console.error('Erro ao consultar a API da Vultr:', error);
+    });
+
 const proxy = httpProxy.createProxyServer({});
 const targets = [];
+
+if (fs.existsSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`)) {
+    const https = useHttps.createServer(
+        {
+            key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`),
+            cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.BASEURL}/fullchain.pem`),
+        },
+        app
+    );
+
+    https.listen(8443, () => {
+        console.log('🟢 HTTPS Running - Port 443');
+    });
+} else {
+    console.log('🔴 HTTPS naõ encontrado certificado');
+}
+
+const http = useHttp.createServer(app);
+http.listen(8080, () => {
+    console.log('🟢 HTTP Running - Port 80');
+});
 
 const httpsOptions = {
     key: fs.readFileSync('seu_certificado.key'), // Substitua com o caminho para sua chave privada
