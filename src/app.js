@@ -26,28 +26,27 @@ axios
     .then((response) => {
         console.log('Resposta da API da Vultr:');
         console.log(response.data);
-        response.data.instances
-            .forEach((instance) => {
-                if ('Balance' in instance.tags) {
-                    console.log('🟢 Balanceador de Carga encontrado');
-                    console.log(instance.instanceID);
-                    // insert or update isntaceID in LB_server
-                    database.query(
-                        `INSERT INTO LB_server (instanceID, tipo, ip) VALUES ('${instance.instanceID}', 'Balance','${instance.internal_ip}') ON DUPLICATE KEY UPDATE instanceID='${instance.instanceID}'`,
-                        (err, results) => {
-                            if (err) {
-                                console.log('🔴 Erro ao inserir ou atualizar o registro na tabela LB_server');
-                                console.log(err);
-                                return;
-                            }
-                            console.log('🟢 Registro inserido ou atualizado na tabela LB_server');
+        response.data.instances.forEach((instance) => {
+            if ('Balance' in instance.tags) {
+                console.log('🟢 Balanceador de Carga encontrado');
+                console.log(instance.instanceID);
+                // insert or update isntaceID in LB_server
+                database.query(
+                    `INSERT INTO LB_server (instanceID, tipo, ip) VALUES ('${instance.instanceID}', 'Balance','${instance.internal_ip}') ON DUPLICATE KEY UPDATE instanceID='${instance.instanceID}'`,
+                    (err, results) => {
+                        if (err) {
+                            console.log('🔴 Erro ao inserir ou atualizar o registro na tabela LB_server');
+                            console.log(err);
+                            return;
                         }
-                    );
-                }
-            })
-            .catch((error) => {
-                console.error('Erro ao consultar a API da Vultr:', error);
-            });
+                        console.log('🟢 Registro inserido ou atualizado na tabela LB_server');
+                    }
+                );
+            }
+        });
+    })
+    .catch((error) => {
+        console.error('Erro ao consultar a API da Vultr:', error);
     });
 
 return null;
