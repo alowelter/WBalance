@@ -1,0 +1,27 @@
+{
+  "name": "wbalance",
+  "version": "1.0.0",
+  "description": "Welm Load Balance",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alowelter/WBalance.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alowelter/WBalance/issues"
+  },
+  "homepage": "https://github.com/alowelter/WBalance#readme",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "http": "^0.0.1-security",
+    "http-proxy": "^1.18.1",
+    "https": "^1.0.0",
+    "mysql2": "^3.6.1",
+    "os": "^0.1.2"
+  }
+}

@@ -1,0 +1,16 @@
+{
+    "watch": "src",
+    "script": "src/app.js",
+    "name": "WBalance",
+    "kill_timeout": 60000,
+    "exec_mode": "cluster",
+    "ignore_watch" : ["node_modules", "sqlite", ".git"],
+    "log_rotate_size": "100M",
+    "watch_options": {
+        "followSymlinks": true,
+        "awaitWriteFinish": {
+            "stabilityThreshold": 10000,
+            "pollInterval": 100
+        }
+    }
+}
