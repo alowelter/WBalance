@@ -27,6 +27,7 @@ axios
         console.log('Resposta da API da Vultr:');
         console.log(response.data);
         response.data.instances.forEach((instance) => {
+            console.logh('>>>', instance.tags);
             if ('Balance' in instance.tags) {
                 console.log('🟢 Balanceador de Carga encontrado');
                 console.log(instance.instanceID);
