@@ -24,24 +24,20 @@ axios
         },
     })
     .then((response) => {
+        let sql = `INSERT INTO LB_server (instanceID, tipo, ip) VALUES (?, 'Balance', ?) ON DUPLICATE KEY UPDATE ip = VALUES(ip)`;
         console.log('Resposta da API da Vultr:');
         console.log(response.data);
         response.data.instances.forEach((instance) => {
-            console.log('>>>', instance.tags);
-
             if (instance.tags.includes('Balance')) {
                 console.log('🟢 Balanceador de Carga encontrado');
-                database.query(
-                    `INSERT INTO LB_server (instanceID, tipo, ip) VALUES ('${instance.id}', 'Balance','${instance.internal_ip}') ON DUPLICATE KEY UPDATE instanceID='${instance.id}'`,
-                    (err, results) => {
-                        if (err) {
-                            console.log('🔴 Erro ao inserir ou atualizar o registro na tabela LB_server');
-                            console.log(err);
-                            return;
-                        }
-                        console.log('🟢 Registro inserido ou atualizado na tabela LB_server');
+                database.query(sql, [instance.id, instance.internal_ip], (err, results) => {
+                    if (err) {
+                        console.log('🔴 Erro ao inserir ou atualizar o registro na tabela LB_server');
+                        console.log(err);
+                        return;
                     }
-                );
+                    console.log('🟢 Registro inserido ou atualizado na tabela LB_server');
+                });
             }
         });
     })
