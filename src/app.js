@@ -31,10 +31,8 @@ axios
 
             if (instance.tags.includes('Balance')) {
                 console.log('🟢 Balanceador de Carga encontrado');
-                console.log(instance.instanceID);
-                // insert or update isntaceID in LB_server
                 database.query(
-                    `INSERT INTO LB_server (instanceID, tipo, ip) VALUES ('${instance.instanceID}', 'Balance','${instance.internal_ip}') ON DUPLICATE KEY UPDATE instanceID='${instance.instanceID}'`,
+                    `INSERT INTO LB_server (instanceID, tipo, ip) VALUES ('${instance.id}', 'Balance','${instance.internal_ip}') ON DUPLICATE KEY UPDATE instanceID='${instance.id}'`,
                     (err, results) => {
                         if (err) {
                             console.log('🔴 Erro ao inserir ou atualizar o registro na tabela LB_server');
