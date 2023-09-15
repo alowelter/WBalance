@@ -28,7 +28,8 @@ axios
         console.log(response.data);
         response.data.instances.forEach((instance) => {
             console.log('>>>', instance.tags);
-            if ('Balance' in instance.tags) {
+
+            if (instance.tags.includes('Balance')) {
                 console.log('🟢 Balanceador de Carga encontrado');
                 console.log(instance.instanceID);
                 // insert or update isntaceID in LB_server
