@@ -31,6 +31,8 @@ axios
         console.error('Erro ao consultar a API da Vultr:', error);
     });
 
+return null;
+
 const proxy = httpProxy.createProxyServer({});
 const targets = [];
 
