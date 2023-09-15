@@ -11,6 +11,10 @@ const mysql = require('mysql2');
 const database = mysql.createConnection(process.env.DATABASE_URL);
 console.log('🟢 Mysql - PlanetScale');
 
+console.log('🟢 Sistema Operacional', os.platform());
+
+return;
+
 const proxy = httpProxy.createProxyServer({});
 const targets = [];
 
