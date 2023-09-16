@@ -23,7 +23,9 @@ if (os.platform() != 'linux') {
     return;
 }
 
-const instances = await api.instances();
+(async () => {
+    const instances = await api.instances();
+})();
 
 console.log('--->', instances.data);
 /*
@@ -49,8 +51,7 @@ api.instances()
     .catch((error) => {
         console.error('Erro ao consultar a API da Vultr:', error);
     });
-    */
-
+*/
 return null;
 
 const proxy = httpProxy.createProxyServer({});
