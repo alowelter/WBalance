@@ -23,14 +23,7 @@ if (os.platform() != 'linux') {
     return;
 }
 
-(async () => {
-    try {
-        const instances = await api.instances();
-        console.log('--->', instances.data);
-    } catch (error) {
-        console.error('Ocorreu um erro ao buscar dados da API:', error);
-    }
-})();
+const instances = api.instances();
 
 console.log('--->', instances.data);
 /*
