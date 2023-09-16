@@ -65,7 +65,7 @@ async function main() {
 
 main();
 
-process.exit(0);
+//process.exit(0);
 return null;
 
 const proxy = httpProxy.createProxyServer({});
