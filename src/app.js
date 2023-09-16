@@ -27,7 +27,7 @@ async function main() {
     try {
         const instancesResponse = await api.instances();
         const instances = instancesResponse.data;
-        console.log('--->', instancesData);
+        console.log('--->', instances);
 
         /*
         api.instances()
