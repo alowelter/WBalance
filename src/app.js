@@ -23,12 +23,11 @@ if (os.platform() != 'linux') {
     return;
 }
 
-(async () => {
+async function main() {
     try {
         const instancesResponse = await api.instances();
         const instances = instancesResponse.data;
         console.log('--->', instancesData);
-
 
         /*
         api.instances()
@@ -55,16 +54,18 @@ if (os.platform() != 'linux') {
             });
         */
 
-
         // Continue com as outras inicializações após receber as instâncias
         // ...
     } catch (error) {
         console.error('Ocorreu um erro ao buscar dados da API:', error);
         // Trate o erro de inicialização, se necessário
         process.exit(1); // Encerra o aplicativo com um código de erro
-        
-})();
+    }
+}
 
+main();
+
+process.exit(0);
 return null;
 
 const proxy = httpProxy.createProxyServer({});
