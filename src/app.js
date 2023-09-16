@@ -19,9 +19,11 @@ const database = mysql.createConnection(process.env.DATABASE_URL);
 console.log('🟢 Mysql - PlanetScale');
 
 if (os.platform() != 'linux') {
-    console.log('🔴 Sistema Operacional não suportado');
+    console.log('🔴 Sistema deve ser linux');
     return;
 }
+
+console.log('Prefix', process.env.VULTR_SERVER_LABEL_PREFIX);
 
 async function main() {
     try {
