@@ -23,10 +23,7 @@ if (os.platform() != 'linux') {
     return;
 }
 
-const instances = (async () => {
-    let ret = await api.instances();
-    return ret.data;
-})();
+const instances = await api.instances();
 
 console.log('--->', instances.data);
 /*
