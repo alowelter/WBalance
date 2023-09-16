@@ -29,7 +29,11 @@ async function main() {
     try {
         const instancesResponse = await api.instances();
         const instances = instancesResponse.data;
-        console.log('--->', instances);
+        console.log('instances --->', instances);
+
+        const loadbalanceResponse = await api.loadbalance();
+        const loadbalance = loadbalanceResponse.data;
+        console.log('loadbalance --->', loadbalance);
 
         /*
         api.instances()
