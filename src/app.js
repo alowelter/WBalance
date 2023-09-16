@@ -23,12 +23,6 @@ if (os.platform() != 'linux') {
     return;
 }
 
-api.instances().then((response) => {
-    console.log('🔶 Storage:');
-    console.log(response.data);
-    console.log('=============================');
-});
-
 api.instances()
     .then((response) => {
         let sql = `INSERT INTO LB_server (instanceID, tipo, ip) VALUES (?, 'Balance', ?) ON DUPLICATE KEY UPDATE ip = VALUES(ip)`;
