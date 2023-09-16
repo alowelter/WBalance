@@ -1,12 +1,18 @@
 const useHttp = require('http');
 const useHttps = require('https');
 const httpProxy = require('http-proxy');
-const axios = require('axios');
 const fs = require('fs');
 const os = require('os');
 
 require('dotenv').config();
 process.env.TZ = 'America/Sao_Paulo';
+
+// Tarefas Cron
+const cronController = require('./controllers/CronController');
+cronController.scheduleTask();
+
+// API
+const api = require('./controllers/ApiController');
 
 const mysql = require('mysql2');
 const database = mysql.createConnection(process.env.DATABASE_URL);
@@ -17,24 +23,13 @@ if (os.platform() != 'linux') {
     return;
 }
 
-axios
-    .get('https://api.vultr.com/v2/blocks', {
-        headers: {
-            Authorization: `Bearer ${process.env.VULTR_API_KEY}`,
-        },
-    })
-    .then((response) => {
-        console.log('🔶 Storage:');
-        console.log(response.data);
-        console.log('=============================');
-    });
+api.instances().then((response) => {
+    console.log('🔶 Storage:');
+    console.log(response.data);
+    console.log('=============================');
+});
 
-axios
-    .get('https://api.vultr.com/v2/instances', {
-        headers: {
-            Authorization: `Bearer ${process.env.VULTR_API_KEY}`,
-        },
-    })
+api.instances()
     .then((response) => {
         let sql = `INSERT INTO LB_server (instanceID, tipo, ip) VALUES (?, 'Balance', ?) ON DUPLICATE KEY UPDATE ip = VALUES(ip)`;
         console.log('Resposta da API da Vultr:');
