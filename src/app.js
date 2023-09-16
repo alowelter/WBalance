@@ -18,6 +18,18 @@ if (os.platform() != 'linux') {
 }
 
 axios
+    .get('https://api.vultr.com/v2/blocks', {
+        headers: {
+            Authorization: `Bearer ${process.env.VULTR_API_KEY}`,
+        },
+    })
+    .then((response) => {
+        console.log('🔶 Storage:');
+        console.log(response.data);
+        console.log('=============================');
+    });
+
+axios
     .get('https://api.vultr.com/v2/instances', {
         headers: {
             Authorization: `Bearer ${process.env.VULTR_API_KEY}`,
