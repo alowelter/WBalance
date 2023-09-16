@@ -23,11 +23,13 @@ if (os.platform() != 'linux') {
     return;
 }
 
-(async () => {
-    const instances = await api.instances();
-    console.log('--->', instances);
+const instances = (async () => {
+    let ret = await api.instances();
+    return ret.data;
 })();
 
+console.log('--->', instances.data);
+/*
 api.instances()
     .then((response) => {
         let sql = `INSERT INTO LB_server (instanceID, tipo, ip) VALUES (?, 'Balance', ?) ON DUPLICATE KEY UPDATE ip = VALUES(ip)`;
@@ -50,6 +52,7 @@ api.instances()
     .catch((error) => {
         console.error('Erro ao consultar a API da Vultr:', error);
     });
+    */
 
 return null;
 
