@@ -23,33 +23,48 @@ if (os.platform() != 'linux') {
     return;
 }
 
-const instances = api.instances();
+(async () => {
+    try {
+        const instancesResponse = await api.instances();
+        const instances = instancesResponse.data;
+        console.log('--->', instancesData);
 
-console.log('--->', instances.data);
-/*
-api.instances()
-    .then((response) => {
-        let sql = `INSERT INTO LB_server (instanceID, tipo, ip) VALUES (?, 'Balance', ?) ON DUPLICATE KEY UPDATE ip = VALUES(ip)`;
-        console.log('Resposta da API da Vultr:');
-        console.log(response.data);
-        response.data.instances.forEach((instance) => {
-            if (instance.tags.includes('Balance')) {
-                console.log('🟢 Balanceador de Carga encontrado');
-                database.query(sql, [instance.id, instance.internal_ip], (err, results) => {
-                    if (err) {
-                        console.log('🔴 Erro ao inserir ou atualizar o registro na tabela LB_server');
-                        console.log(err);
-                        return;
+
+        /*
+        api.instances()
+            .then((response) => {
+                let sql = `INSERT INTO LB_server (instanceID, tipo, ip) VALUES (?, 'Balance', ?) ON DUPLICATE KEY UPDATE ip = VALUES(ip)`;
+                console.log('Resposta da API da Vultr:');
+                console.log(response.data);
+                response.data.instances.forEach((instance) => {
+                    if (instance.tags.includes('Balance')) {
+                        console.log('🟢 Balanceador de Carga encontrado');
+                        database.query(sql, [instance.id, instance.internal_ip], (err, results) => {
+                            if (err) {
+                                console.log('🔴 Erro ao inserir ou atualizar o registro na tabela LB_server');
+                                console.log(err);
+                                return;
+                            }
+                            console.log('🟢 Registro inserido ou atualizado na tabela LB_server');
+                        });
                     }
-                    console.log('🟢 Registro inserido ou atualizado na tabela LB_server');
                 });
-            }
-        });
-    })
-    .catch((error) => {
-        console.error('Erro ao consultar a API da Vultr:', error);
-    });
-*/
+            })
+            .catch((error) => {
+                console.error('Erro ao consultar a API da Vultr:', error);
+            });
+        */
+
+
+        // Continue com as outras inicializações após receber as instâncias
+        // ...
+    } catch (error) {
+        console.error('Ocorreu um erro ao buscar dados da API:', error);
+        // Trate o erro de inicialização, se necessário
+        process.exit(1); // Encerra o aplicativo com um código de erro
+        
+})();
+
 return null;
 
 const proxy = httpProxy.createProxyServer({});
