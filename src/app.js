@@ -23,7 +23,7 @@ if (os.platform() != 'linux') {
     return;
 }
 
-console.log('Prefix', process.env.VULTR_SERVER_LABEL_PREFIX);
+//console.log('Prefix', process.env.VULTR_SERVER_LABEL_PREFIX);
 
 async function main() {
     try {
