@@ -23,6 +23,11 @@ if (os.platform() != 'linux') {
     return;
 }
 
+(async () => {
+    const instances = await api.instances();
+    console.log('--->', instances);
+})();
+
 api.instances()
     .then((response) => {
         let sql = `INSERT INTO LB_server (instanceID, tipo, ip) VALUES (?, 'Balance', ?) ON DUPLICATE KEY UPDATE ip = VALUES(ip)`;
