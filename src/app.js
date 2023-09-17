@@ -79,7 +79,7 @@ app.use(async (req, res, next) => {
 async function main() {
     try {
         const instancesResponse = await api.instances();
-        instances = instancesResponse.data;
+        instances = instancesResponse.data.instances;
         console.log('🟢 Instances', instances);
 
         const loadbalanceResponse = await api.loadbalance();
