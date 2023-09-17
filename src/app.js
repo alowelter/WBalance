@@ -80,11 +80,11 @@ async function main() {
     try {
         const instancesResponse = await api.instances();
         instances = instancesResponse.data;
-        console.log('🟢 Instances', instances.length);
+        console.log('🟢 Instances', instances);
 
         const loadbalanceResponse = await api.loadbalance();
         loadbalance = loadbalanceResponse.data;
-        console.log('🟢  Loadbalance', loadbalance.length);
+        console.log('🟢 Loadbalance', loadbalance.length);
 
         if (instances.length > 0) {
             instances.forEach((instance) => {
