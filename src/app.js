@@ -32,8 +32,8 @@ if (fs.existsSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`)) {
         },
         app
     );
-    https.listen(443, () => {
-        console.log('🟢 HTTPS Running - Port 443');
+    https.listen(8443, () => {
+        console.log('🟢 HTTPS Running - Port 8443');
     });
 } else {
     console.log('🔴 HTTPS naõ encontrado certificado');
@@ -41,8 +41,8 @@ if (fs.existsSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`)) {
 }
 
 const http = useHttp.createServer(app);
-http.listen(80, () => {
-    console.log('🟢 HTTP Running - Port 80');
+http.listen(8080, () => {
+    console.log('🟢 HTTP Running - Port 8080');
 });
 
 // Proxy
@@ -92,52 +92,3 @@ function removeServer(targetUrl) {
 
 //process.exit(0);
 return null;
-
-const http = useHttp.createServer(app);
-http.listen(8080, () => {
-    console.log('🟢 HTTP Running - Port 80');
-});
-
-const httpsOptions = {
-    key: fs.readFileSync('seu_certificado.key'), // Substitua com o caminho para sua chave privada
-    cert: fs.readFileSync('seu_certificado.crt'), // Substitua com o caminho para seu certificado SSL/TLS
-};
-
-const server = http.createServer((req, res) => {
-    if (targets.length === 0) {
-        res.writeHead(500, { 'Content-Type': 'text/plain' });
-        res.end('Nenhum servidor de destino disponível.');
-        return;
-    }
-
-    const target = targets[Math.floor(Math.random() * targets.length)];
-    proxy.web(req, res, target);
-});
-
-const httpsServer = https.createServer(httpsOptions, (req, res) => {
-    if (targets.length === 0) {
-        res.writeHead(500, { 'Content-Type': 'text/plain' });
-        res.end('Nenhum servidor de destino disponível.');
-        return;
-    }
-
-    const target = targets[Math.floor(Math.random() * targets.length)];
-    proxy.web(req, res, target);
-});
-
-server.listen(PORT, () => {
-    console.log(`Servidor HTTP de balanceamento de carga rodando na porta ${PORT}`);
-});
-
-httpsServer.listen(HTTPS_PORT, () => {
-    console.log(`Servidor HTTPS de balanceamento de carga rodando na porta ${HTTPS_PORT}`);
-});
-
-// Exemplos de uso das funções
-addServer('http://localhost:3001');
-addServer('http://localhost:3002');
-
-// Remova um servidor após algum tempo (por exemplo, 30 segundos)
-setTimeout(() => {
-    removeServer('http://localhost:3001');
-}, 30000);
