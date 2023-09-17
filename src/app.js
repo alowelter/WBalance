@@ -27,7 +27,7 @@ if (os.platform() != 'linux') {
 }
 
 // WebServer
-if (fs.existsSync(`privkey.pem`)) {
+if (fs.existsSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`)) {
     const https = useHttps.createServer(
         {
             key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`),
