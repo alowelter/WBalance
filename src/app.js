@@ -75,18 +75,18 @@ app.use(async (req, res, next) => {
     }
     console.log('instance ', instances[0]);
 
-    //proxy.web(req, res, { target: 'http://localhost:3001' }, (err) => {
+    proxy.web(req, res, { target: instances[0].internal_ip }, (err) => {
 });
 
 async function main() {
     try {
         const instancesResponse = await api.instances();
         instances = instancesResponse.data;
-        console.log('instances --->', instances);
+        console.log('instances --->', instances.length);
 
         const loadbalanceResponse = await api.loadbalance();
         loadbalance = loadbalanceResponse.data;
-        console.log('loadbalance --->', loadbalance);
+        console.log('loadbalance --->', loadbalance.length);
 
         if (instances.length > 0) {
             instances.forEach((instance) => {
