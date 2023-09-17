@@ -75,7 +75,7 @@ app.use(async (req, res, next) => {
     }
     console.log('instance ', instances[0]);
 
-    proxy.web(req, res, { target: instances[0].internal_ip }, (err) => {
+    proxy.web(req, res, { target: instances[0].internal_ip });
 });
 
 async function main() {
