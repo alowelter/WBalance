@@ -17,7 +17,6 @@ cronController.scheduleTask();
 
 // API
 const api = require('./controllers/ApiController');
-
 const mysql = require('mysql2');
 const database = mysql.createConnection(process.env.DATABASE_URL);
 console.log('🟢 Mysql - PlanetScale');
@@ -25,7 +24,6 @@ console.log('🟢 Mysql - PlanetScale');
 // handles
 let instances = null;
 let loadbalance = null;
-
 if (os.platform() != 'linux') {
     console.log('🔴 Sistema deve ser linux');
     return;
@@ -82,11 +80,11 @@ async function main() {
     try {
         const instancesResponse = await api.instances();
         instances = instancesResponse.data;
-        console.log('instances --->', instances.length);
+        console.log('🟢 Instances', instances.length);
 
         const loadbalanceResponse = await api.loadbalance();
         loadbalance = loadbalanceResponse.data;
-        console.log('loadbalance --->', loadbalance.length);
+        console.log('🟢  Loadbalance', loadbalance.length);
 
         if (instances.length > 0) {
             instances.forEach((instance) => {
