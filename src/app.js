@@ -1,4 +1,5 @@
 const useHttp = require('http');
+const useHttps = require('https');
 const useProxy = require('http-proxy');
 const fs = require('fs');
 const os = require('os');
