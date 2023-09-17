@@ -24,11 +24,11 @@ if (os.platform() != 'linux') {
 }
 
 // WebServer
-if (fs.existsSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`)) {
+if (fs.existsSync(`privkey.pem`)) {
     const https = useHttps.createServer(
         {
-            key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`),
-            cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.BASEURL}/fullchain.pem`),
+            key: fs.readFileSync(`privkey.pem`),
+            cert: fs.readFileSync(`fullchain.pem`),
         },
         app
     );
@@ -37,8 +37,6 @@ if (fs.existsSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`)) {
     });
 } else {
     console.log('🔴 HTTPS naõ encontrado certificado');
-    console.log(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`);
-    console.log(`/etc/letsencrypt/live/${process.env.BASEURL}/fullchain.pem`);
 
     process.exit(1);
 }
