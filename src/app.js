@@ -24,11 +24,11 @@ if (os.platform() != 'linux') {
 }
 
 // WebServer
-if (fs.existsSync(`privkey.pem`)) {
+if (fs.existsSync(`../privkey.pem`)) {
     const https = useHttps.createServer(
         {
-            key: fs.readFileSync(`privkey.pem`),
-            cert: fs.readFileSync(`fullchain.pem`),
+            key: fs.readFileSync(`../privkey.pem`),
+            cert: fs.readFileSync(`../fullchain.pem`),
         },
         app
     );
