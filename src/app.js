@@ -23,6 +23,32 @@ if (os.platform() != 'linux') {
     return;
 }
 
+// WebServer
+if (fs.existsSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`)) {
+    const https = useHttps.createServer(
+        {
+            key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`),
+            cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.BASEURL}/fullchain.pem`),
+        },
+        app
+    );
+    https.listen(443, () => {
+        console.log('🟢 HTTPS Running - Port 443');
+    });
+} else {
+    console.log('🔴 HTTPS naõ encontrado certificado');
+    process.exit(1);
+}
+
+const http = useHttp.createServer(app);
+http.listen(80, () => {
+    console.log('🟢 HTTP Running - Port 80');
+});
+
+// Proxy
+const proxy = httpProxy.createProxyServer({});
+const targets = [];
+
 //console.log('Prefix', process.env.VULTR_SERVER_LABEL_PREFIX);
 
 async function main() {
@@ -35,33 +61,11 @@ async function main() {
         const loadbalance = loadbalanceResponse.data;
         console.log('loadbalance --->', loadbalance);
 
-        /*
-        api.instances()
-            .then((response) => {
-                let sql = `INSERT INTO LB_server (instanceID, tipo, ip) VALUES (?, 'Balance', ?) ON DUPLICATE KEY UPDATE ip = VALUES(ip)`;
-                console.log('Resposta da API da Vultr:');
-                console.log(response.data);
-                response.data.instances.forEach((instance) => {
-                    if (instance.tags.includes('Balance')) {
-                        console.log('🟢 Balanceador de Carga encontrado');
-                        database.query(sql, [instance.id, instance.internal_ip], (err, results) => {
-                            if (err) {
-                                console.log('🔴 Erro ao inserir ou atualizar o registro na tabela LB_server');
-                                console.log(err);
-                                return;
-                            }
-                            console.log('🟢 Registro inserido ou atualizado na tabela LB_server');
-                        });
-                    }
-                });
-            })
-            .catch((error) => {
-                console.error('Erro ao consultar a API da Vultr:', error);
+        if (instances.length > 0) {
+            instances.forEach((instance) => {
+                addServer(`http://${instance.internal_ip}`);
             });
-        */
-
-        // Continue com as outras inicializações após receber as instâncias
-        // ...
+        }
     } catch (error) {
         console.error('Ocorreu um erro ao buscar dados da API:', error);
         // Trate o erro de inicialização, se necessário
@@ -71,27 +75,23 @@ async function main() {
 
 main();
 
+// Função para adicionar um servidor à lista de proxy
+function addServer(targetUrl) {
+    targets.push({ target: targetUrl });
+    console.log(`Servidor ${targetUrl} adicionado à lista de proxy.`);
+}
+
+// Função para remover um servidor da lista de proxy
+function removeServer(targetUrl) {
+    const index = targets.findIndex((t) => t.target === targetUrl);
+    if (index !== -1) {
+        targets.splice(index, 1);
+        console.log(`Servidor ${targetUrl} removido da lista de proxy.`);
+    }
+}
+
 //process.exit(0);
 return null;
-
-const proxy = httpProxy.createProxyServer({});
-const targets = [];
-
-if (fs.existsSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`)) {
-    const https = useHttps.createServer(
-        {
-            key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`),
-            cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.BASEURL}/fullchain.pem`),
-        },
-        app
-    );
-
-    https.listen(8443, () => {
-        console.log('🟢 HTTPS Running - Port 443');
-    });
-} else {
-    console.log('🔴 HTTPS naõ encontrado certificado');
-}
 
 const http = useHttp.createServer(app);
 http.listen(8080, () => {
@@ -125,9 +125,6 @@ const httpsServer = https.createServer(httpsOptions, (req, res) => {
     proxy.web(req, res, target);
 });
 
-const PORT = 8080;
-const HTTPS_PORT = 8443;
-
 server.listen(PORT, () => {
     console.log(`Servidor HTTP de balanceamento de carga rodando na porta ${PORT}`);
 });
@@ -135,21 +132,6 @@ server.listen(PORT, () => {
 httpsServer.listen(HTTPS_PORT, () => {
     console.log(`Servidor HTTPS de balanceamento de carga rodando na porta ${HTTPS_PORT}`);
 });
-
-// Função para adicionar um servidor à lista de proxy
-function addServer(targetUrl) {
-    targets.push({ target: targetUrl });
-    console.log(`Servidor ${targetUrl} adicionado à lista de proxy.`);
-}
-
-// Função para remover um servidor da lista de proxy
-function removeServer(targetUrl) {
-    const index = targets.findIndex((t) => t.target === targetUrl);
-    if (index !== -1) {
-        targets.splice(index, 1);
-        console.log(`Servidor ${targetUrl} removido da lista de proxy.`);
-    }
-}
 
 // Exemplos de uso das funções
 addServer('http://localhost:3001');
