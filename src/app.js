@@ -85,12 +85,6 @@ async function main() {
         const loadbalanceResponse = await api.loadbalance();
         loadbalance = loadbalanceResponse.data;
         console.log('🟢 Loadbalance', loadbalance.length);
-
-        if (instances.length > 0) {
-            instances.forEach((instance) => {
-                addServer(`http://${instance.internal_ip}`);
-            });
-        }
     } catch (error) {
         console.error('Ocorreu um erro ao buscar dados da API:', error);
         // Trate o erro de inicialização, se necessário
