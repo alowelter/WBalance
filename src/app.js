@@ -37,6 +37,9 @@ if (fs.existsSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`)) {
     });
 } else {
     console.log('🔴 HTTPS naõ encontrado certificado');
+    console.log(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`);
+    console.log(`/etc/letsencrypt/live/${process.env.BASEURL}/fullchain.pem`);
+
     process.exit(1);
 }
 
