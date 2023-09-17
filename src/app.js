@@ -3,6 +3,8 @@ const useHttps = require('https');
 const useProxy = require('http-proxy');
 const fs = require('fs');
 const os = require('os');
+const app = express();
+app.use(helmet());
 
 require('dotenv').config();
 process.env.TZ = 'America/Sao_Paulo';
