@@ -80,7 +80,7 @@ async function main() {
     try {
         const instancesResponse = await api.instances();
         instances = instancesResponse.data.instances;
-        console.log('🟢 Instances', instances);
+        console.log('🟢 Instances', instances.length);
 
         const loadbalanceResponse = await api.loadbalance();
         loadbalance = loadbalanceResponse.data;
