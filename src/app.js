@@ -98,7 +98,7 @@ async function main() {
         instances = InstancesController.Instances();
         console.log('🟢 Instances', instances.length);
 
-        loadbalance = InstancesController.Loadbalance();
+        loadbalance = InstancesController.LoadBalance();
         console.log('🟢 Loadbalance', loadbalance.length);
     } catch (error) {
         console.error('Ocorreu um erro ao buscar dados da API:', error);

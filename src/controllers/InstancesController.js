@@ -1,6 +1,6 @@
 const api = require('./ApiController');
 
-module.Instances = async (req, res) => {
+exports.Instances = async (req, res) => {
     api.Get('/instances')
         .then((response) => {
             res.json(response.data);
@@ -10,7 +10,7 @@ module.Instances = async (req, res) => {
         });
 };
 
-module.Loadbalance = async (req, res) => {
+exports.LoadBalance = async (req, res) => {
     api.Get('/instances')
         .then((response) => {
             res.json(response.data);
