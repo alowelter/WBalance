@@ -32,7 +32,7 @@ app.use(
             imgSrc: ["'self'", 'data:', 'blob:', 'https://*.gravatar.com', 'https://s.w.org'],
             // Outras diretivas CSP aqui
             connectSrc: ["'self'", 'http://${process.env.BASEURL}', `https://${process.env.BASEURL}`],
-            formAction: ["'self'", `https://${process.env.BASEURL}`],
+            formAction: ["'self'", `https://${process.env.BASEURL}`, "'*'"],
         },
     })
 );
