@@ -95,10 +95,10 @@ const proxyLog = (proxyServer, options) => {
 
 async function main() {
     try {
-        instances = InstancesController.Instances();
+        instances = await InstancesController.Instances();
         console.log('🟢 Instances', instances.length);
 
-        loadbalance = InstancesController.LoadBalance();
+        loadbalance = await InstancesController.LoadBalance();
         console.log('🟢 Loadbalance', loadbalance.length);
     } catch (error) {
         console.error('Ocorreu um erro ao buscar dados da API:', error);
