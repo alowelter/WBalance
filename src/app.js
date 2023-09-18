@@ -58,24 +58,6 @@ http.createServer(app).listen(3001, () => {
     console.log('🟢 HTTP Running - Port 3001');
 });
 
-async function main() {
-    try {
-        const instancesResponse = await api.instances();
-        instances = instancesResponse.data.instances;
-        console.log('🟢 Instances', instances.length);
-
-        const loadbalanceResponse = await api.loadbalance();
-        loadbalance = loadbalanceResponse.data.instances;
-        console.log('🟢 Loadbalance', loadbalance.length);
-    } catch (error) {
-        console.error('Ocorreu um erro ao buscar dados da API:', error);
-        // Trate o erro de inicialização, se necessário
-        process.exit(1); // Encerra o aplicativo com um código de erro
-    }
-}
-
-main();
-
 // -----------------------------------------------------
 // Proxy
 const proxyOptions = {
@@ -105,23 +87,41 @@ function getServer() {
     }
 }
 
-app.get('/ping', (req, res) => {
-    return res.send('pong');
-});
+async function main() {
+    try {
+        const instancesResponse = await api.instances();
+        instances = instancesResponse.data.instances;
+        console.log('🟢 Instances', instances.length);
 
-app.use(async (req, res, next) => {
-    const currentTime = new Date().toLocaleTimeString().slice(0, 8);
-    console.log(`🔸 ${currentTime} │ {${req.method}} -> ${req.path}`);
-});
+        const loadbalanceResponse = await api.loadbalance();
+        loadbalance = loadbalanceResponse.data.instances;
+        console.log('🟢 Loadbalance', loadbalance.length);
 
-app.use(
-    '/',
-    createProxyMiddleware({
-        target: getServer(), // Seleciona aleatoriamente um servidor de destino
-        changeOrigin: true,
-        onProxyRes(proxyRes) {
-            // Aqui você pode adicionar qualquer manipulação adicional de resposta, se necessário
-            proxyReq.setHeader('X-Special-Proxy-Header', 'WBalance');
-        },
-    })
-);
+        app.get('/ping', (req, res) => {
+            return res.send('pong');
+        });
+
+        app.use(async (req, res, next) => {
+            const currentTime = new Date().toLocaleTimeString().slice(0, 8);
+            console.log(`🔸 ${currentTime} │ {${req.method}} -> ${req.path}`);
+        });
+
+        app.use(
+            '/',
+            createProxyMiddleware({
+                target: getServer(), // Seleciona aleatoriamente um servidor de destino
+                changeOrigin: true,
+                onProxyRes(proxyRes) {
+                    // Aqui você pode adicionar qualquer manipulação adicional de resposta, se necessário
+                    proxyReq.setHeader('X-Special-Proxy-Header', 'WBalance');
+                },
+            })
+        );
+    } catch (error) {
+        console.error('Ocorreu um erro ao buscar dados da API:', error);
+        // Trate o erro de inicialização, se necessário
+        process.exit(1); // Encerra o aplicativo com um código de erro
+    }
+}
+
+main();
