@@ -7,6 +7,13 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const app = express();
+
+const axios = require('axios');
+
+// Cors
+app.use(cors());
+
+// CSP
 //app.use(helmet());
 app.use(
     helmet.contentSecurityPolicy({
@@ -17,11 +24,6 @@ app.use(
         },
     })
 );
-
-const axios = require('axios');
-
-// Cors
-app.use(cors());
 
 require('dotenv').config();
 process.env.TZ = 'America/Sao_Paulo';
