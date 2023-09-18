@@ -24,7 +24,8 @@ app.use(
             // Diretivas base
             defaultSrc: ["'self'"],
             // Permitir 'unsafe-inline' e 'unsafe-eval' apenas onde necessário
-            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", `https://${process.env.BASEURL}`],
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", `https://${process.env.BASEURL}`, 'blob:'],
+            workerSrc: ["'self'", 'blob:'], // Adicionado workerSrc
             // Diretiva para carregar frames apenas do mesmo domínio
             frameSrc: ["'self'", `https://cloudfront.flipay.com.br`, 'blob:'],
             // Permitir imagens de qualquer fonte, incluindo 'data:' e 'https://s.w.org'
