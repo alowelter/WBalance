@@ -112,16 +112,12 @@ exports.Create = async (req, res, next) => {
             enable_vpc: true,
         };
 
-        let r = await api.Post('https://api.vultr.com/v2/instances', params, {
-            headers: {
-                Authorization: `Bearer ${process.env.VULTR_API_KEY}`,
-            },
-        });
+        let ret = await api.Post('/instances', params);
 
         console.log('--------------------');
-        console.log(r.data);
+        console.log(ret.data);
         console.log('--------------------');
-        return res.status(200).json(r.data);
+        return res.status(200).json(ret.data);
 
         /*
     let os = await api.Get('/os', params, {
