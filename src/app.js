@@ -165,7 +165,7 @@ async function serverImprove() {
                         });
                     }
                 } catch (error) {
-                    console.error(`🔹 ${instance.internal_ip} > Error: Criando proxy`);
+                    console.error(`🔹 ${instance.internal_ip} > Error: Criando proxy ${error.message}`);
                 }
                 try {
                     // Faça uma solicitação HTTP para obter o uso de CPU de cada instância
