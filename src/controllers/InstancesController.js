@@ -1,4 +1,6 @@
 const api = require('./api');
+require('dotenv').config();
+
 const instanceScript = `#cloud-config
 packages:
   - nginx
@@ -93,7 +95,7 @@ power_state:
   message: Reboot after install
   condition: True`;
 
-exports.Create = async (req, res) => {
+exports.Create = async (req, res, next) => {
     const params = {
         region: 'ewr',
         plan: 'vc2-6c-16gb',
