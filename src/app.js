@@ -8,8 +8,6 @@ const helmet = require('helmet');
 const app = express();
 app.use(helmet());
 
-const InstancesController = require('./controllers/InstancesController');
-
 require('dotenv').config();
 process.env.TZ = 'America/Sao_Paulo';
 
@@ -17,6 +15,8 @@ process.env.TZ = 'America/Sao_Paulo';
 const cronController = require('./controllers/CronController');
 cronController.scheduleTask();
 
+// API
+const api = require('./controllers/ApiController');
 const mysql = require('mysql2');
 const database = mysql.createConnection(process.env.DATABASE_URL);
 console.log('🟢 Mysql - PlanetScale');
@@ -95,10 +95,13 @@ const proxyLog = (proxyServer, options) => {
 
 async function main() {
     try {
-        instances = await InstancesController.Instances();
+        const instancesResponse = await api.instances();
+        instances = instancesResponse.data.instances;
+        instances = [...instances, { internal_ip: '190.124.46.242' }];
         console.log('🟢 Instances', instances.length);
 
-        loadbalance = await InstancesController.LoadBalance();
+        const loadbalanceResponse = await api.loadbalance();
+        loadbalance = loadbalanceResponse.data.instances;
         console.log('🟢 Loadbalance', loadbalance.length);
     } catch (error) {
         console.error('Ocorreu um erro ao buscar dados da API:', error);
