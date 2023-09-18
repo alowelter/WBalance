@@ -10,6 +10,10 @@ const app = express();
 
 const axios = require('axios');
 
+// Config
+require('dotenv').config();
+process.env.TZ = 'America/Sao_Paulo';
+
 // Cors
 app.use(cors());
 
@@ -24,9 +28,6 @@ app.use(
         },
     })
 );
-
-require('dotenv').config();
-process.env.TZ = 'America/Sao_Paulo';
 
 const deploy = require('./controllers/deployController');
 const InstancesController = require('./controllers/InstancesController');
