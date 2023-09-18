@@ -1,4 +1,4 @@
-const useHttp = require('http');
+const http = require('http');
 const https = require('https');
 const proxy = require('http-proxy-middleware');
 const fs = require('fs');
@@ -35,8 +35,8 @@ if (fs.existsSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`)) {
         key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`),
         cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.BASEURL}/fullchain.pem`),
     };
-    https.createServer(options, app).listen(8443, () => {
-        console.log('🟢 HTTPS Running - Port 8443');
+    https.createServer(options, app).listen(443, () => {
+        console.log('🟢 HTTPS Running - Port 443');
     });
 } else {
     console.log('🔴 HTTPS - Não encontrado certificado');
@@ -54,9 +54,8 @@ if (fs.existsSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`)) {
     process.exit(1);
 }
 
-const http = useHttp.createServer(app);
-http.listen(3001, () => {
-    console.log('🟢 HTTP Running - Port 8080');
+http.createServer(app).listen(3001, () => {
+    console.log('🟢 HTTP Running - Port 3001');
 });
 
 // Proxy
