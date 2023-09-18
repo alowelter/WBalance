@@ -111,7 +111,7 @@ exports.Create = async (req, res, next) => {
         enable_vpc: true,
     };
 
-    let r = await api.post('https://api.vultr.com/v2/instances', params, {
+    let r = await api.Post('https://api.vultr.com/v2/instances', params, {
         headers: {
             Authorization: `Bearer ${process.env.VULTR_API_KEY}`,
         },
