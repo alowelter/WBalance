@@ -53,7 +53,7 @@ if (fs.existsSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`)) {
             process.exit(1);
         }
         console.log(`🔶 Resultado: ${stdout}`);
-        console.error(`🔴 Erros do comando: ${stderr}`);
+        process.exit(0);
     });
 }
 
