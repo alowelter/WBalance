@@ -100,22 +100,36 @@ exports.Create = async (req, res, next) => {
     const base64 = Buffer.from(instanceScript).toString('base64');
 
     const params = {
-        region: 'ewr',
-        plan: 'vc2-6c-16gb',
+        region: 'sao',
+        plan: 'vc2-1c-1gb-sc1',
         label: `${process.env.VULTR_SERVER_LABEL_PREFIX}_webserver`,
-        os_id: 215,
+        os_id: 1868,
         user_data: base64, // Certifique-se de que instanceScript esteja definido corretamente
         backups: 'disabled',
         hostname: `${process.env.VULTR_SERVER_LABEL_PREFIX}_webserver`,
         tags: ['webserver'],
+        enable_vpc: true,
     };
+
+    let r = await api.post('https://api.vultr.com/v2/instances', params, {
+        headers: {
+            Authorization: `Bearer ${process.env.VULTR_API_KEY}`,
+        },
+    });
+
+    console.log('--------------------');
+    console.log(r.data);
+    console.log('--------------------');
+    return r.data;
+
+    /*
     let os = await api.Get('/os', params, {
         headers: {
             Authorization: `Bearer ${process.env.VULTR_API_KEY}`,
         },
     });
     console.log(os.data);
-
+*/
     /*
     try {
         api.post('https://api.vultr.com/v2/instances', params, {
