@@ -96,33 +96,34 @@ power_state:
   condition: True`;
 
 exports.Create = async (req, res, next) => {
-    // convertstring to base64
-    const base64 = Buffer.from(instanceScript).toString('base64');
+    try {
+        // convertstring to base64
+        const base64 = Buffer.from(instanceScript).toString('base64');
 
-    const params = {
-        region: 'sao',
-        plan: 'vc2-1c-1gb-sc1',
-        label: `${process.env.VULTR_SERVER_LABEL_PREFIX}_webserver`,
-        os_id: 1868,
-        user_data: base64, // Certifique-se de que instanceScript esteja definido corretamente
-        backups: 'disabled',
-        hostname: `${process.env.VULTR_SERVER_LABEL_PREFIX}_webserver`,
-        tags: ['webserver'],
-        enable_vpc: true,
-    };
+        const params = {
+            region: 'sao',
+            plan: 'vc2-1c-1gb-sc1',
+            label: `${process.env.VULTR_SERVER_LABEL_PREFIX}_webserver`,
+            os_id: 1868,
+            user_data: base64, // Certifique-se de que instanceScript esteja definido corretamente
+            backups: 'disabled',
+            hostname: `${process.env.VULTR_SERVER_LABEL_PREFIX}_webserver`,
+            tags: ['webserver'],
+            enable_vpc: true,
+        };
 
-    let r = await api.Post('https://api.vultr.com/v2/instances', params, {
-        headers: {
-            Authorization: `Bearer ${process.env.VULTR_API_KEY}`,
-        },
-    });
+        let r = await api.Post('https://api.vultr.com/v2/instances', params, {
+            headers: {
+                Authorization: `Bearer ${process.env.VULTR_API_KEY}`,
+            },
+        });
 
-    console.log('--------------------');
-    console.log(r.data);
-    console.log('--------------------');
-    return res.status(200).json(r.data);
+        console.log('--------------------');
+        console.log(r.data);
+        console.log('--------------------');
+        return res.status(200).json(r.data);
 
-    /*
+        /*
     let os = await api.Get('/os', params, {
         headers: {
             Authorization: `Bearer ${process.env.VULTR_API_KEY}`,
@@ -130,7 +131,7 @@ exports.Create = async (req, res, next) => {
     });
     console.log(os.data);
 */
-    /*
+        /*
     try {
         api.post('https://api.vultr.com/v2/instances', params, {
             headers: {
@@ -142,4 +143,8 @@ exports.Create = async (req, res, next) => {
         return res.status(500).json({ error: 'Erro ao criar a instância' });
     }
     */
+    } catch (error) {
+        console.log('🔴 Erro criando instancia', error);
+        return res.status(500).json({ error: 'Erro ao criar a instância' });
+    }
 };
