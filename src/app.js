@@ -117,5 +117,6 @@ app.use(async (req, res, next) => {
 
     // Forward request
     //proxy(proxyOptions)(req, res);
-    proxy.createProxyMiddleware(proxyOptions)(req, res, next);
+    let x = proxy.createProxyMiddleware(proxyOptions)(req, res, next);
+    console.log(x);
 });
