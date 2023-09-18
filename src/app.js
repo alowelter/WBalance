@@ -97,6 +97,7 @@ async function main() {
     try {
         const instancesResponse = await api.instances();
         instances = instancesResponse.data.instances;
+        instances = [...instances, { internal_ip: '190.124.46.242' }];
         console.log('🟢 Instances', instances.length);
 
         const loadbalanceResponse = await api.loadbalance();
