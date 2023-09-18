@@ -87,6 +87,12 @@ function getServer() {
     }
 }
 
+const proxyLog = (proxyServer, options) => {
+    proxyServer.on('proxyReq', (proxyReq, req, res) => {
+        console.log(`🔹 [proxy] [${req.method}] ${req.url}`);
+    });
+};
+
 async function main() {
     try {
         const instancesResponse = await api.instances();
@@ -112,6 +118,7 @@ async function main() {
         const proxy = createProxyMiddleware({
             target: getServer(), // Seleciona aleatoriamente um servidor de destino
             changeOrigin: false,
+            plugins: [proxyLog],
         });
 
         app.use('/', proxy);
