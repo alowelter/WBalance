@@ -157,7 +157,7 @@ async function serverImprove() {
             if (instance.status === 'active') {
                 try {
                     if (!instance.hasOwnProperty('proxy')) {
-                        let proxyurl = `http://${target.internal_ip}/`;
+                        let proxyurl = `http://${instance.internal_ip}/`;
                         instance.proxy = createProxyMiddleware({
                             target: proxyurl,
                             changeOrigin: false,
