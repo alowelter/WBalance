@@ -7,7 +7,6 @@ const express = require('express');
 const helmet = require('helmet');
 const app = express();
 app.use(helmet());
-const router = express.Router();
 
 require('dotenv').config();
 process.env.TZ = 'America/Sao_Paulo';
@@ -82,6 +81,7 @@ function getServer() {
     return instances[currIndex];
 }
 
+/*
 // Proxy requests
 router.all('*', (req, res) => {
     // Get next target server
@@ -91,6 +91,7 @@ router.all('*', (req, res) => {
     // Forward request
     proxy(proxyOptions)(req, res);
 });
+*/
 
 async function main() {
     try {
@@ -109,3 +110,13 @@ async function main() {
 }
 
 main();
+
+app.get('/ping', (req, res) => {
+    return res.send('pong');
+});
+
+app.use(async (req, res, next) => {
+    const currentTime = new Date().toLocaleTimeString().slice(0, 8);
+    console.log(`🔸 ${currentTime} │ ${userIP} - {${req.method}} -> ${req.path}`);
+    next();
+});
