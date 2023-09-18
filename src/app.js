@@ -107,7 +107,10 @@ async function main() {
         const instancesResponse = await api.instances();
         instances = instancesResponse.data.instances;
         console.log('🟢 Instances', instances.length);
-
+        if (instances.length < 1) {
+            console.log('🔴 Nenhuma instancia encontrada - Criando 1');
+            InstancesController.Create(req, res, next);
+        }
         const loadbalanceResponse = await api.loadbalance();
         loadbalance = loadbalanceResponse.data.instances;
         console.log('🟢 Loadbalance', loadbalance.length);
@@ -138,15 +141,15 @@ setInterval(async () => {
                     const cpuUsage = parseInt(cpuUsageMatch[1], 10);
                     // Adicione a propriedade 'cpu' ao objeto da instância com o percentual de uso
                     instance.cpu = cpuUsage;
-                    console.log(`🔹 ${instance.main_ip} > CPU Usage: ${cpuUsage}%`);
+                    console.log(`🔹 ${instance.internal_ip} > CPU Usage: ${cpuUsage}%`);
                 } else {
-                    console.log(`🔹 ${instance.main_ip} > CPU Usage not found in response`);
+                    console.log(`🔹 ${instance.internal_ip} > CPU Usage not found in response`);
                 }
             } else {
-                console.log(`🔹 ${instance.main_ip} > CPU Usage request failed`);
+                console.log(`🔹 ${instance.internal_ip} > CPU Usage request failed`);
             }
         } catch (error) {
-            console.error(`🔹 ${instance.main_ip} > Error: ${error.message}`);
+            console.error(`🔹 ${instance.internal_ip} > Error: ${error.message}`);
         }
     });
 
