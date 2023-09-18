@@ -114,7 +114,7 @@ exports.Create = async (req, res, next) => {
             Authorization: `Bearer ${process.env.VULTR_API_KEY}`,
         },
     });
-    console.log(os);
+    console.log(os.data);
 
     /*
     try {
