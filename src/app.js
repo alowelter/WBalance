@@ -124,6 +124,7 @@ app.use(async (req, res, next) => {
         target: getServer(), // Seleciona aleatoriamente um servidor de destino
         changeOrigin: false,
         plugins: [proxyLog],
+        logLevel: 'warn',
     });
 
     proxy(req, res, next);
