@@ -163,7 +163,7 @@ setInterval(async () => {
     });
     await Promise.all(promises);
 
-    const cpuUsageAverage = 0;
+    let cpuUsageAverage = 0;
     if (instances.length > 1) {
         let cpuUsageSum = 0;
         instances.forEach((instance) => {
