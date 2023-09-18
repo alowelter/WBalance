@@ -120,7 +120,7 @@ exports.Create = async (req, res, next) => {
     console.log('--------------------');
     console.log(r.data);
     console.log('--------------------');
-    return r.data;
+    return res.status(200).json(r.data);
 
     /*
     let os = await api.Get('/os', params, {
