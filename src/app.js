@@ -11,7 +11,7 @@ app.use(helmet());
 require('dotenv').config();
 process.env.TZ = 'America/Sao_Paulo';
 
-const deploy = require('./helper/deploy');
+const deploy = require('./controllers/deployController');
 
 // Tarefas Cron
 const cronController = require('./controllers/CronController');
