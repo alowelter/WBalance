@@ -21,7 +21,6 @@ app.use(cors());
 app.use(
     helmet.contentSecurityPolicy({
         directives: {
-            ...helmet.contentSecurityPolicy.getDefaultDirectives(),
             // Diretivas base
             defaultSrc: ["'self'"],
             // Permitir 'unsafe-inline' e 'unsafe-eval' apenas onde necessário
