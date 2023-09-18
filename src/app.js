@@ -21,17 +21,14 @@ app.use(cors());
 app.use(
     helmet.contentSecurityPolicy({
         directives: {
-            // Permitir tudo, mas isso é altamente não recomendado para ambientes de produção
-            defaultSrc: ['*'],
-            scriptSrc: ['*'],
-            styleSrc: ['*'],
-            imgSrc: ['*'],
-            connectSrc: ['*'],
-            fontSrc: ['*'],
-            objectSrc: ['*'],
-            mediaSrc: ['*'],
-            frameSrc: ['*'],
-            manifestSrc: ['*'],
+            // Diretivas base
+            defaultSrc: ["'self'"],
+            // Permitir 'unsafe-inline' e 'unsafe-eval' apenas onde necessário
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", `https://${process.env.BASEURL}`],
+            // Diretiva para carregar frames apenas do mesmo domínio
+            frameSrc: ["'self'", `https://${process.env.BASEURL}`],
+            // Permitir imagens de qualquer fonte, incluindo 'data:' e 'https://s.w.org'
+            imgSrc: ["'self'", 'data:', 'blob:'],
             // Outras diretivas CSP aqui
         },
     })
