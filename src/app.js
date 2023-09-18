@@ -5,9 +5,13 @@ const fs = require('fs');
 const os = require('os');
 const express = require('express');
 const helmet = require('helmet');
+const cors = require('cors');
 const app = express();
 app.use(helmet());
 const axios = require('axios');
+
+// Cors
+app.use(cors());
 
 require('dotenv').config();
 process.env.TZ = 'America/Sao_Paulo';
