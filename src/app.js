@@ -113,15 +113,15 @@ async function main() {
 main();
 
 app.get('/ping', (req, res) => {
+    console.log(`🔹 ping`);
     return res.send('pong');
 });
 
 app.use(async (req, res, next) => {
-    const currentTime = new Date().toLocaleTimeString().slice(0, 8);
-    console.log(`🔸 ${currentTime} │ {${req.method}} -> ${req.path}`);
+    console.log(`🔸 {${req.method}} -> ${req.path}`);
 
     const proxy = createProxyMiddleware({
-        target: getServer(), // Seleciona aleatoriamente um servidor de destino
+        target: getServer(),
         changeOrigin: false,
         plugins: [proxyLog],
         logLevel: 'warn',
