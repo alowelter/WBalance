@@ -152,6 +152,18 @@ setInterval(async () => {
             console.error(`🔹 ${instance.internal_ip} > Error: ${error.message}`);
         }
     });
+    // add one more to Promise to calculate de cpuusage averrange
+    promises.push(
+        new Promise((resolve, reject) => {
+            let cpuUsageSum = 0;
+            instances.forEach((instance) => {
+                cpuUsageSum += instance.cpu;
+            });
+            const cpuUsageAverage = cpuUsageSum / instances.length;
+            console.log(`🔹 Uso CPU médio: ${cpuUsageAverage}%`);
+            resolve();
+        })
+    );
 
     await Promise.all(promises);
 }, 60 * 1000); // 1 minuto
