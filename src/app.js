@@ -27,12 +27,12 @@ app.use(
             scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", `https://${process.env.BASEURL}`, 'blob:'],
             workerSrc: ["'self'", 'blob:'], // Adicionado workerSrc
             // Diretiva para carregar frames apenas do mesmo domínio
-            frameSrc: ["'self'", `https://cloudfront.flipay.com.br`, 'blob:'],
+            frameSrc: ["'self'", `https://${process.env.BASEURL}`, 'blob:'],
             // Permitir imagens de qualquer fonte, incluindo 'data:' e 'https://s.w.org'
             imgSrc: ["'self'", 'data:', 'blob:', 'https://*.gravatar.com', 'https://s.w.org'],
             // Outras diretivas CSP aqui
-            connectSrc: ["'self'", 'http://cloudfront.flipay.com.br', `https://${process.env.BASEURL}`],
-            formAction: ["'self'", 'https://cloudfront.flipay.com.br'],
+            connectSrc: ["'self'", 'http://${process.env.BASEURL}', `https://${process.env.BASEURL}`],
+            formAction: ["'self'", 'https://${process.env.BASEURL}'],
         },
     })
 );
