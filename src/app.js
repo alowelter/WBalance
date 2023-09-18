@@ -26,7 +26,7 @@ app.use(
             // Permitir 'unsafe-inline' e 'unsafe-eval' apenas onde necessário
             scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", `https://${process.env.BASEURL}`],
             // Diretiva para carregar frames apenas do mesmo domínio
-            frameSrc: ["'self'", `https://${process.env.BASEURL}`],
+            frameSrc: ["'self'", `https://cloudfront.flipay.com.br`, 'blob:'],
             // Permitir imagens de qualquer fonte, incluindo 'data:' e 'https://s.w.org'
             imgSrc: ["'self'", 'data:', 'blob:', `blob:https://${process.env.BASEURL}`],
             // Outras diretivas CSP aqui
