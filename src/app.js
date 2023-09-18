@@ -116,6 +116,6 @@ app.get('/ping', (req, res) => {
 
 app.use(async (req, res, next) => {
     const currentTime = new Date().toLocaleTimeString().slice(0, 8);
-    console.log(`🔸 ${currentTime} │ ${userIP} - {${req.method}} -> ${req.path}`);
+    console.log(`🔸 ${currentTime} │ {${req.method}} -> ${req.path}`);
     next();
 });
