@@ -153,20 +153,24 @@ setInterval(async () => {
             console.error(`🔹 ${instance.internal_ip} > Error: ${error.message}`);
         }
     });
-    // add one more to Promise to calculate de cpuusage averrange
-    promises.push(
-        new Promise((resolve, reject) => {
-            let cpuUsageSum = 0;
-            instances.forEach((instance) => {
-                cpuUsageSum += instance.cpu;
-            });
-            const cpuUsageAverage = cpuUsageSum / instances.length;
-            console.log(`🔹 Uso CPU médio: ${cpuUsageAverage}%`);
-            resolve();
-        })
-    );
-
     await Promise.all(promises);
+
+    const cpuUsageAverage = 0;
+    if (instances.length > 1) {
+        let cpuUsageSum = 0;
+        instances.forEach((instance) => {
+            cpuUsageSum += instance.cpu;
+        });
+        cpuUsageAverage = cpuUsageSum / instances.length;
+    }
+    if (instances.length === 1) {
+        const cpuUsageAverage = instances[0].cpu;
+    }
+    if (instances.length < 1) {
+        console.log('🔴 Nenhuma instancia encontrada - Criando 1');
+        InstancesController.Create(req, res, next);
+    }
+    console.log(`🔹 Uso CPU médio: ${cpuUsageAverage}%`);
 }, 60 * 1000); // 1 minuto
 
 app.get('/ping', (req, res) => {
