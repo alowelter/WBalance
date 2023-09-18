@@ -11,6 +11,8 @@ app.use(helmet());
 require('dotenv').config();
 process.env.TZ = 'America/Sao_Paulo';
 
+const deploy = require('./helper/deploy');
+
 // Tarefas Cron
 const cronController = require('./controllers/CronController');
 cronController.scheduleTask();
@@ -22,6 +24,7 @@ const database = mysql.createConnection(process.env.DATABASE_URL);
 console.log('🟢 Mysql - PlanetScale');
 
 // handles
+
 let instances = null;
 let loadbalance = null;
 if (os.platform() != 'linux') {
@@ -120,6 +123,14 @@ main();
 app.get('/ping', (req, res) => {
     console.log(`🔹 ping`);
     return res.send('pong');
+});
+
+// Auto-deploy
+app.get('/deploy', async (req, res, next) => {
+    deploy.run(req, res, next);
+});
+app.post('/deploy', async (req, res, next) => {
+    deploy.run(req, res, next);
 });
 
 app.use(async (req, res, next) => {
