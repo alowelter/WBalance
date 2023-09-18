@@ -1,12 +1,12 @@
 const useHttp = require('http');
-const useHttps = require('https');
+const https = require('https');
 const proxy = require('http-proxy-middleware');
 const fs = require('fs');
 const os = require('os');
 const express = require('express');
-//const helmet = require('helmet');
-//const app = express();
-//app.use(helmet());
+const helmet = require('helmet');
+const app = express();
+app.use(helmet());
 const router = express.Router();
 
 require('dotenv').config();
@@ -32,14 +32,11 @@ if (os.platform() != 'linux') {
 
 // WebServer
 if (fs.existsSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`)) {
-    const https = useHttps.createServer(
-        {
-            key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`),
-            cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.BASEURL}/fullchain.pem`),
-        },
-        app
-    );
-    https.listen(443, () => {
+    const options = {
+        key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`),
+        cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.BASEURL}/fullchain.pem`),
+    };
+    https.createServer(options, app).listen(8443, () => {
         console.log('🟢 HTTPS Running - Port 8443');
     });
 } else {
