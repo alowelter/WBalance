@@ -23,12 +23,12 @@ app.use(
         directives: {
             //defaultSrc: ["'self'"],
             defaultSrc: ["'self'", `https://${process.env.BASEURL}/*`],
-            //scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'blob:', `https://${process.env.BASEURL}`],
-            //workerSrc: ["'self'", 'blob:'],
-            //frameSrc: ["'self'", 'blob:', `https://${process.env.BASEURL}`],
-            //imgSrc: ["'self'", 'data:', 'blob:', 'https://*.gravatar.com'],
-            //connectSrc: ["'self'", `https://${process.env.BASEURL}`, `wss://${process.env.BASEURL}`],
-            //formAction: ["'self'", "'unsafe-inline'", `https://${process.env.BASEURL}`],
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'blob:', `https://${process.env.BASEURL}`],
+            workerSrc: ["'self'", 'blob:'],
+            frameSrc: ["'self'", 'blob:', `https://${process.env.BASEURL}`],
+            imgSrc: ["'self'", 'data:', 'blob:', 'https://*.gravatar.com'],
+            connectSrc: ["'self'", `https://${process.env.BASEURL}`, `wss://${process.env.BASEURL}`],
+            formAction: ["'self'", "'unsafe-inline'", `https://${process.env.BASEURL}`],
         },
     })
 );
