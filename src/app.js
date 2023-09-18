@@ -18,12 +18,17 @@ process.env.TZ = 'America/Sao_Paulo';
 app.use(cors());
 
 // CSP
-//app.use(helmet());
 app.use(
     helmet.contentSecurityPolicy({
         directives: {
-            // Adicione ou modifique as diretivas CSP conforme necessário
-            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "'frame-src'", "'img-src'", `https://${process.env.BASEURL}`],
+            // Diretivas base
+            defaultSrc: ["'self'"],
+            // Permitir 'unsafe-inline' e 'unsafe-eval' apenas onde necessário
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", `https://${process.env.BASEURL}`],
+            // Diretiva para carregar frames apenas do mesmo domínio
+            frameSrc: ["'self'"],
+            // Diretiva para carregar imagens de qualquer fonte
+            imgSrc: ["'self'", 'data:'],
             // Outras diretivas CSP aqui
         },
     })
