@@ -109,7 +109,7 @@ exports.Create = async (req, res, next) => {
         hostname: `${process.env.VULTR_SERVER_LABEL_PREFIX}_webserver`,
         tags: ['webserver'],
     };
-    let os = await api.post('https://api.vultr.com/v2/os', params, {
+    let os = await api.Post('https://api.vultr.com/v2/os', params, {
         headers: {
             Authorization: `Bearer ${process.env.VULTR_API_KEY}`,
         },
