@@ -7,6 +7,7 @@ const express = require('express');
 const helmet = require('helmet');
 const app = express();
 app.use(helmet());
+const axios = require('axios');
 
 require('dotenv').config();
 process.env.TZ = 'America/Sao_Paulo';
@@ -122,21 +123,34 @@ main();
 setInterval(async () => {
     const instancesResponse = await api.instances();
     instances = instancesResponse.data.instances;
-    console.log('🟢 Refresh Instances', instances.length);
+    console.log('🟣 Refresh Instances', instances.length);
 
-    instances.forEach((instance) => {
-        // get cpu.php from instance
-        const options = {
-            hostname: instance.main_ip,
-            port: 80,
-            path: '/cpu.php',
-            method: 'GET',
-        };
+    const promises = instances.map(async (instance) => {
+        try {
+            // Faça uma solicitação HTTP para obter o uso de CPU de cada instância
+            const response = await axios.get(`http://${instance.internal_ip}/cpu.php`);
 
-        const req = http.request(options, (res) => {
-            console.log(`🔹 ${instance.main_ip} > ${res.statusCode}`);
-        });
+            // Verifique se a resposta foi bem-sucedida
+            if (response.status === 200) {
+                // Use uma expressão regular para extrair a porcentagem de uso da CPU
+                const cpuUsageMatch = response.data.match(/CPU:(\d+)%/);
+                if (cpuUsageMatch && cpuUsageMatch[1]) {
+                    const cpuUsage = parseInt(cpuUsageMatch[1], 10);
+                    // Adicione a propriedade 'cpu' ao objeto da instância com o percentual de uso
+                    instance.cpu = cpuUsage;
+                    console.log(`🔹 ${instance.main_ip} > CPU Usage: ${cpuUsage}%`);
+                } else {
+                    console.log(`🔹 ${instance.main_ip} > CPU Usage not found in response`);
+                }
+            } else {
+                console.log(`🔹 ${instance.main_ip} > CPU Usage request failed`);
+            }
+        } catch (error) {
+            console.error(`🔹 ${instance.main_ip} > Error: ${error.message}`);
+        }
     });
+
+    await Promise.all(promises);
 }, 60 * 1000); // 1 minuto
 
 app.get('/ping', (req, res) => {
