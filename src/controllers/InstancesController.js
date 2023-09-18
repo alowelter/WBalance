@@ -107,10 +107,14 @@ exports.Create = async (req, res, next) => {
             os_id: 1868,
             user_data: base64, // Certifique-se de que instanceScript esteja definido corretamente
             backups: 'disabled',
-            hostname: `${process.env.VULTR_SERVER_LABEL_PREFIX}_webserver`,
+            hostname: `webserver`,
             tags: ['webserver'],
             enable_vpc: true,
         };
+
+        console.log('-[ criando ]-------------------');
+        console.log(params);
+        console.log('-------------------------------');
 
         let ret = await api.Post('/instances', params);
 
