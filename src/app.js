@@ -104,6 +104,7 @@ async function main() {
         app.use(async (req, res, next) => {
             const currentTime = new Date().toLocaleTimeString().slice(0, 8);
             console.log(`🔸 ${currentTime} │ {${req.method}} -> ${req.path}`);
+            next();
         });
 
         const proxy = createProxyMiddleware({
