@@ -75,7 +75,7 @@ let currIndex = 0;
 // Get next server
 function getServer() {
     // Round robin
-    currIndex = (currIndex + 1) % servers.length;
+    currIndex = (currIndex + 1) % instances.length;
 
     return instances[currIndex];
 }
