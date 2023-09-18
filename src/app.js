@@ -80,7 +80,7 @@ function getServer() {
         currIndex = (currIndex + 1) % instances.length;
 
         const target = instances[currIndex];
-        return `http://${target.internal_ip}`;
+        return `http://${target.internal_ip}/`;
     } catch (error) {
         console.log('🔴 Erro ao obtendo instancia.', error);
         return null;
@@ -106,17 +106,16 @@ async function main() {
             console.log(`🔸 ${currentTime} │ {${req.method}} -> ${req.path}`);
         });
 
-        app.use(
-            '/',
-            createProxyMiddleware({
-                target: getServer(), // Seleciona aleatoriamente um servidor de destino
-                changeOrigin: true,
-                onProxyRes(proxyRes) {
-                    // Aqui você pode adicionar qualquer manipulação adicional de resposta, se necessário
-                    proxyReq.setHeader('X-Special-Proxy-Header', 'WBalance');
-                },
-            })
-        );
+        const proxy = createProxyMiddleware({
+            target: getServer(), // Seleciona aleatoriamente um servidor de destino
+            changeOrigin: true,
+            onProxyRes(proxyRes) {
+                // Aqui você pode adicionar qualquer manipulação adicional de resposta, se necessário
+                proxyReq.setHeader('X-Special-Proxy-Header', 'WBalance');
+            },
+        });
+
+        app.use('/', proxy);
     } catch (error) {
         console.error('Ocorreu um erro ao buscar dados da API:', error);
         // Trate o erro de inicialização, se necessário
