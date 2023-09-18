@@ -7,7 +7,17 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const app = express();
-app.use(helmet());
+//app.use(helmet());
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            // Adicione ou modifique as diretivas CSP conforme necessário
+            scriptSrc: ["'self'", `https://${process.env.BASEURL}`],
+            // Outras diretivas CSP aqui
+        },
+    })
+);
+
 const axios = require('axios');
 
 // Cors
