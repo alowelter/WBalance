@@ -28,7 +28,7 @@ app.use(
             // Diretiva para carregar frames apenas do mesmo domínio
             frameSrc: ["'self'", `https://${process.env.BASEURL}`],
             // Permitir imagens de qualquer fonte, incluindo 'data:' e 'https://s.w.org'
-            imgSrc: ["'self'", 'data:', 'https://s.w.org'],
+            imgSrc: ["'self'", 'data:', 'blob:'],
             // Outras diretivas CSP aqui
         },
     })
