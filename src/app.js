@@ -123,6 +123,20 @@ setInterval(async () => {
     const instancesResponse = await api.instances();
     instances = instancesResponse.data.instances;
     console.log('🟢 Refresh Instances', instances.length);
+
+    instances.forEach((instance) => {
+        // get cpu.php from instance
+        const options = {
+            hostname: instance.main_ip,
+            port: 80,
+            path: '/cpu.php',
+            method: 'GET',
+        };
+
+        const req = http.request(options, (res) => {
+            console.log(`🔹 ${instance.main_ip} > ${res.statusCode}`);
+        });
+    });
 }, 60 * 1000); // 1 minuto
 
 app.get('/ping', (req, res) => {
