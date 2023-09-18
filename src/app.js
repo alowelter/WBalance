@@ -178,8 +178,10 @@ async function serverImprove() {
                             onProxyRes: (proxyRes, req, res) => {
                                 // Verificar se o cabeçalho CSP está presente na resposta do servidor de destino
                                 if (proxyRes.headers['content-security-policy']) {
-                                    // Copiar o cabeçalho CSP da resposta do servidor de destino para a resposta ao cliente
-                                    res.setHeader('content-security-policy', proxyRes.headers['content-security-policy']);
+                                    // Modificar o cabeçalho CSP conforme necessário
+                                    const currentCSP = proxyRes.headers['content-security-policy'];
+                                    const newCSP = `${currentCSP} script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'`;
+                                    proxyRes.headers['content-security-policy'] = newCSP;
                                 }
                             },
                         });
