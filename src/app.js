@@ -22,12 +22,12 @@ app.use(
     helmet.contentSecurityPolicy({
         directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'blob:', `https://${process.env.BASEURL}`, `https://${process.env.LOAD_BALANCER_URL}`],
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'blob:', `https://${process.env.BASEURL}`],
             workerSrc: ["'self'", 'blob:'],
-            frameSrc: ["'self'", 'blob:', `https://${process.env.BASEURL}`, `https://${process.env.LOAD_BALANCER_URL}`],
+            frameSrc: ["'self'", 'blob:', `https://${process.env.BASEURL}`],
             imgSrc: ["'self'", 'data:', 'blob:', 'https://*.gravatar.com'],
-            connectSrc: ["'self'", `https://${process.env.BASEURL}`, `https://${process.env.LOAD_BALANCER_URL}`, `wss://${process.env.LOAD_BALANCER_URL}`],
-            formAction: ["'self'", `https://${process.env.BASEURL}`, `https://${process.env.LOAD_BALANCER_URL}`, "'*'"],
+            connectSrc: ["'self'", `https://${process.env.BASEURL}`, `wss://${process.env.BASEURL}`],
+            formAction: ["'self'", `https://${process.env.BASEURL}`, "'*'"],
         },
     })
 );
