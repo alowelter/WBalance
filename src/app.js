@@ -1,6 +1,6 @@
 const http = require('http');
 const https = require('https');
-const proxy = require('http-proxy-middleware');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 const fs = require('fs');
 const os = require('os');
 const express = require('express');
@@ -97,7 +97,8 @@ function getServer() {
         // Round robin
         currIndex = (currIndex + 1) % instances.length;
 
-        return instances[currIndex];
+        const target = instances[currIndex];
+        return `http://${target.internal_ip}`;
     } catch (error) {
         console.log('🔴 Erro ao obtendo instancia.', error);
         return {};
@@ -108,15 +109,18 @@ app.get('/ping', (req, res) => {
     return res.send('pong');
 });
 
+const proxy = createProxyMiddleware({
+    target: getServer(), // Seleciona aleatoriamente um servidor de destino
+    changeOrigin: true,
+    onProxyRes(proxyRes) {
+        // Aqui você pode adicionar qualquer manipulação adicional de resposta, se necessário
+        proxyReq.setHeader('X-Special-Proxy-Header', 'WBalance');
+    },
+});
+
 app.use(async (req, res, next) => {
     const currentTime = new Date().toLocaleTimeString().slice(0, 8);
     console.log(`🔸 ${currentTime} │ {${req.method}} -> ${req.path}`);
-
-    const target = getServer();
-    proxyOptions.target = `http://${target.internal_ip}`;
-
-    // Forward request
-    //proxy(proxyOptions)(req, res);
-    let x = proxy.createProxyMiddleware(proxyOptions)(req, res, next);
-    console.log(x);
 });
+
+app.use('/', proxy);
