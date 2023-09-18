@@ -91,9 +91,7 @@ function getServer() {
         if (instances[currIndex].status != 'active') {
             return getServer();
         }
-
-        const target = instances[currIndex];
-        return `http://${target.internal_ip}/`;
+        return instances[currIndex];
     } catch (error) {
         console.log('🔴 Erro ao obtendo instancia.', error);
         return null;
@@ -108,16 +106,10 @@ const proxyLog = (proxyServer, options) => {
 
 async function main() {
     try {
-        const instancesResponse = await api.instances();
-        instances = instancesResponse.data.instances;
-        console.log('🟢 Instances', instances.length);
-        if (instances.length < 1) {
-            console.log('🔴 Nenhuma instancia encontrada - Criando 1');
-            InstancesController.Create(req, res, next);
-        }
         const loadbalanceResponse = await api.loadbalance();
         loadbalance = loadbalanceResponse.data.instances;
         console.log('🟢 Loadbalance', loadbalance.length);
+        serverImprove();
     } catch (error) {
         console.error('Ocorreu um erro ao buscar dados da API:', error);
         // Trate o erro de inicialização, se necessário
@@ -128,6 +120,34 @@ async function main() {
 main();
 
 setInterval(async () => {
+    await serverImprove();
+}, 60 * 1000); // 1 minuto
+
+app.get('/ping', (req, res) => {
+    console.log(`🔹 ping`);
+    return res.send('pong');
+});
+
+// Auto-deploy
+app.get('/deploy', async (req, res, next) => {
+    deploy.run(req, res, next);
+});
+app.post('/deploy', async (req, res, next) => {
+    deploy.run(req, res, next);
+});
+app.get('/add-instance', async (req, res, next) => {
+    await InstancesController.Create(req, res, next);
+    const instancesResponse = await api.instances();
+    instances = instancesResponse.data.instances;
+});
+
+app.use(async (req, res, next) => {
+    const target = getServer();
+    console.log(`🔸 {${req.method}} > ${req.path} 🔜 ${target}`);
+    target.proxy(req, res, next);
+});
+
+async function serverImprove() {
     const instancesResponse = await api.instances();
     instances = instancesResponse.data.instances;
     console.log('🟣 Refresh Instances', instances.length);
@@ -135,6 +155,18 @@ setInterval(async () => {
     const promises = instances.map(async (instance) => {
         try {
             if (instance.status === 'active') {
+                try {
+                    if (!instance.hasOwnProperty('proxy')) {
+                        let proxyurl = `http://${target.internal_ip}/`;
+                        instance.proxy = createProxyMiddleware({
+                            target: proxyurl,
+                            changeOrigin: false,
+                            logLevel: 'warn',
+                        });
+                    }
+                } catch (error) {
+                    console.error(`🔹 ${instance.internal_ip} > Error: Criando proxy`);
+                }
                 try {
                     // Faça uma solicitação HTTP para obter o uso de CPU de cada instância
                     const response = await axios.get(`http://${instance.internal_ip}/cpu.php`);
@@ -183,35 +215,4 @@ setInterval(async () => {
         InstancesController.Create(req, res, next);
     }
     console.log(`🔹 Uso CPU médio: ${cpuUsageAverage}%`);
-}, 60 * 1000); // 1 minuto
-
-app.get('/ping', (req, res) => {
-    console.log(`🔹 ping`);
-    return res.send('pong');
-});
-
-// Auto-deploy
-app.get('/deploy', async (req, res, next) => {
-    deploy.run(req, res, next);
-});
-app.post('/deploy', async (req, res, next) => {
-    deploy.run(req, res, next);
-});
-app.get('/add-instance', async (req, res, next) => {
-    await InstancesController.Create(req, res, next);
-    const instancesResponse = await api.instances();
-    instances = instancesResponse.data.instances;
-});
-
-app.use(async (req, res, next) => {
-    const target = getServer();
-    const proxy = createProxyMiddleware({
-        target: target,
-        changeOrigin: false,
-        plugins: [proxyLog],
-        logLevel: 'warn',
-    });
-    console.log(`🔸 {${req.method}} > ${req.path} 🔜 ${target}`);
-
-    proxy(req, res, next);
-});
+}

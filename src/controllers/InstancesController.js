@@ -48,7 +48,7 @@ write_files:
       server {
               listen       80;
               listen       [::]:80;
-              server_name  _;
+              server_name  ${process.env.BASEURL};
               root         /usr/share/nginx/html;
               index index.php index.html;
               try_files $uri $uri/ /index.php?$args;
@@ -106,7 +106,7 @@ exports.Create = async (req, res, next) => {
             os_id: 1868,
             user_data: base64, // Certifique-se de que instanceScript esteja definido corretamente
             backups: 'disabled',
-            hostname: `webserver`,
+            hostname: `${process.env.BASEURL}`,
             tags: ['webserver'],
             enable_vpc: true,
         };
