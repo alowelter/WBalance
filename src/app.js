@@ -21,6 +21,20 @@ app.use(cors());
 app.use(
     helmet.contentSecurityPolicy({
         directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'blob:', `https://${process.env.BASEURL}`, `https://${process.env.LOAD_BALANCER_URL}`],
+            workerSrc: ["'self'", 'blob:'],
+            frameSrc: ["'self'", 'blob:', `https://${process.env.BASEURL}`, `https://${process.env.LOAD_BALANCER_URL}`],
+            imgSrc: ["'self'", 'data:', 'blob:', 'https://*.gravatar.com'],
+            connectSrc: ["'self'", `https://${process.env.BASEURL}`, `https://${process.env.LOAD_BALANCER_URL}`, `wss://${process.env.LOAD_BALANCER_URL}`],
+            formAction: ["'self'", `https://${process.env.BASEURL}`, `https://${process.env.LOAD_BALANCER_URL}`, "'*'"],
+        },
+    })
+);
+/*
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
             // Diretivas base
             defaultSrc: ["'self'"],
             // Permitir 'unsafe-inline' e 'unsafe-eval' apenas onde necessário
@@ -36,26 +50,7 @@ app.use(
         },
     })
 );
-/*
 
-app.use(
-    helmet.contentSecurityPolicy({
-        directives: {
-            // Permitir tudo, mas isso é altamente não recomendado para ambientes de produção
-            defaultSrc: ['*'],
-            scriptSrc: ['*'],
-            styleSrc: ['*'],
-            imgSrc: ['*'],
-            connectSrc: ['*'],
-            fontSrc: ['*'],
-            objectSrc: ['*'],
-            mediaSrc: ['*'],
-            frameSrc: ['*'],
-            manifestSrc: ['*'],
-            // Outras diretivas CSP aqui
-        },
-    })
-);
 */
 
 const deploy = require('./controllers/deployController');
