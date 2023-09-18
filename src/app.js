@@ -122,8 +122,6 @@ async function main() {
             plugins: [proxyLog],
         });
 
-        proxy;
-
         app.use('/', proxy);
     } catch (error) {
         console.error('Ocorreu um erro ao buscar dados da API:', error);
