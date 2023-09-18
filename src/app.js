@@ -112,7 +112,7 @@ async function main() {
             changeOrigin: true,
             onProxyRes(proxyRes) {
                 // Aqui você pode adicionar qualquer manipulação adicional de resposta, se necessário
-                proxyReq.setHeader('X-Special-Proxy-Header', 'WBalance');
+                proxyRes.setHeader('X-Special-Proxy-Header', 'WBalance');
             },
         });
 
