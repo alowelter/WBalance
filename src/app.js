@@ -28,11 +28,32 @@ app.use(
             // Diretiva para carregar frames apenas do mesmo domínio
             frameSrc: ["'self'", `https://${process.env.BASEURL}`],
             // Permitir imagens de qualquer fonte, incluindo 'data:' e 'https://s.w.org'
-            imgSrc: ["'self'", 'data:', 'blob:'],
+            imgSrc: ["'self'", 'data:', 'blob:', `blob:https://${process.env.BASEURL}`],
             // Outras diretivas CSP aqui
         },
     })
 );
+/*
+
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            // Permitir tudo, mas isso é altamente não recomendado para ambientes de produção
+            defaultSrc: ['*'],
+            scriptSrc: ['*'],
+            styleSrc: ['*'],
+            imgSrc: ['*'],
+            connectSrc: ['*'],
+            fontSrc: ['*'],
+            objectSrc: ['*'],
+            mediaSrc: ['*'],
+            frameSrc: ['*'],
+            manifestSrc: ['*'],
+            // Outras diretivas CSP aqui
+        },
+    })
+);
+*/
 
 const deploy = require('./controllers/deployController');
 const InstancesController = require('./controllers/InstancesController');
