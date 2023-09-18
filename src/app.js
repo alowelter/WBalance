@@ -172,9 +172,9 @@ async function serverImprove() {
                             target: proxyurl,
                             changeOrigin: false,
                             logLevel: 'warn',
-                            onProxyReq: (proxyReq, req, res) => {
-                                proxyReq.setHeader('x_auth_user', req.user.email);
-                            },
+                            //onProxyReq: (proxyReq, req, res) => {
+                            //    proxyReq.setHeader('x_auth_user', req.user.email);
+                            //},
                         });
                     }
                 } catch (error) {
