@@ -12,6 +12,7 @@ require('dotenv').config();
 process.env.TZ = 'America/Sao_Paulo';
 
 const deploy = require('./controllers/deployController');
+const InstancesController = require('./controllers/InstancesController');
 
 // Tarefas Cron
 const cronController = require('./controllers/CronController');
@@ -96,12 +97,6 @@ const proxyLog = (proxyServer, options) => {
     });
 };
 
-setInterval(async () => {
-    const instancesResponse = await api.instances();
-    instances = instancesResponse.data.instances;
-    console.log('🟢 Refresh Instances', instances.length);
-}, 60 * 1000); // 1 minuto
-
 async function main() {
     try {
         const instancesResponse = await api.instances();
@@ -120,6 +115,12 @@ async function main() {
 
 main();
 
+setInterval(async () => {
+    const instancesResponse = await api.instances();
+    instances = instancesResponse.data.instances;
+    console.log('🟢 Refresh Instances', instances.length);
+}, 60 * 1000); // 1 minuto
+
 app.get('/ping', (req, res) => {
     console.log(`🔹 ping`);
     return res.send('pong');
@@ -131,6 +132,11 @@ app.get('/deploy', async (req, res, next) => {
 });
 app.post('/deploy', async (req, res, next) => {
     deploy.run(req, res, next);
+});
+app.get('/add-instance', async (req, res, next) => {
+    await InstancesController.Create(req, res, next);
+    const instancesResponse = await api.instances();
+    instances = instancesResponse.data.instances;
 });
 
 app.use(async (req, res, next) => {
