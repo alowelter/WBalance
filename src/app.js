@@ -103,26 +103,6 @@ async function main() {
         const loadbalanceResponse = await api.loadbalance();
         loadbalance = loadbalanceResponse.data.instances;
         console.log('🟢 Loadbalance', loadbalance.length);
-
-        app.get('/ping', (req, res) => {
-            return res.send('pong');
-        });
-
-        /*
-        app.use(async (req, res, next) => {
-            const currentTime = new Date().toLocaleTimeString().slice(0, 8);
-            console.log(`🔸 ${currentTime} │ {${req.method}} -> ${req.path}`);
-            next();
-        });
-        */
-
-        const proxy = createProxyMiddleware({
-            target: getServer(), // Seleciona aleatoriamente um servidor de destino
-            changeOrigin: false,
-            plugins: [proxyLog],
-        });
-
-        app.use('/', proxy);
     } catch (error) {
         console.error('Ocorreu um erro ao buscar dados da API:', error);
         // Trate o erro de inicialização, se necessário
@@ -131,3 +111,20 @@ async function main() {
 }
 
 main();
+
+app.get('/ping', (req, res) => {
+    return res.send('pong');
+});
+
+app.use(async (req, res, next) => {
+    const currentTime = new Date().toLocaleTimeString().slice(0, 8);
+    console.log(`🔸 ${currentTime} │ {${req.method}} -> ${req.path}`);
+
+    const proxy = createProxyMiddleware({
+        target: getServer(), // Seleciona aleatoriamente um servidor de destino
+        changeOrigin: false,
+        plugins: [proxyLog],
+    });
+
+    proxy(req, res, next);
+});
