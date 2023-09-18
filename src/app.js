@@ -101,7 +101,7 @@ function getServer() {
         return `http://${target.internal_ip}`;
     } catch (error) {
         console.log('🔴 Erro ao obtendo instancia.', error);
-        return {};
+        return null;
     }
 }
 
@@ -109,18 +109,19 @@ app.get('/ping', (req, res) => {
     return res.send('pong');
 });
 
-const proxy = createProxyMiddleware({
-    target: getServer(), // Seleciona aleatoriamente um servidor de destino
-    changeOrigin: true,
-    onProxyRes(proxyRes) {
-        // Aqui você pode adicionar qualquer manipulação adicional de resposta, se necessário
-        proxyReq.setHeader('X-Special-Proxy-Header', 'WBalance');
-    },
-});
-
 app.use(async (req, res, next) => {
     const currentTime = new Date().toLocaleTimeString().slice(0, 8);
     console.log(`🔸 ${currentTime} │ {${req.method}} -> ${req.path}`);
 });
 
-app.use('/', proxy);
+app.use(
+    '/',
+    createProxyMiddleware({
+        target: getServer(), // Seleciona aleatoriamente um servidor de destino
+        changeOrigin: true,
+        onProxyRes(proxyRes) {
+            // Aqui você pode adicionar qualquer manipulação adicional de resposta, se necessário
+            proxyReq.setHeader('X-Special-Proxy-Header', 'WBalance');
+        },
+    })
+);
