@@ -117,5 +117,10 @@ app.get('/ping', (req, res) => {
 app.use(async (req, res, next) => {
     const currentTime = new Date().toLocaleTimeString().slice(0, 8);
     console.log(`🔸 ${currentTime} │ {${req.method}} -> ${req.path}`);
-    next();
+
+    const target = getServer();
+    proxyOptions.target = `http://${target.internal_ip}`;
+
+    // Forward request
+    proxy(proxyOptions)(req, res);
 });
