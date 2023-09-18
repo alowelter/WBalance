@@ -122,15 +122,9 @@ async function main() {
             plugins: [proxyLog],
         });
 
-        //app.use('/', proxy);
-        app.use(
-            '/',
-            createProxyMiddleware({
-                target: getServer(), // Seleciona aleatoriamente um servidor de destino
-                changeOrigin: false,
-                plugins: [proxyLog],
-            })
-        );
+        proxy;
+
+        app.use('/', proxy);
     } catch (error) {
         console.error('Ocorreu um erro ao buscar dados da API:', error);
         // Trate o erro de inicialização, se necessário
