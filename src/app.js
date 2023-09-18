@@ -30,6 +30,7 @@ app.use(
             // Permitir imagens de qualquer fonte, incluindo 'data:' e 'https://s.w.org'
             imgSrc: ["'self'", 'data:', 'blob:', 'https://*.gravatar.com'],
             // Outras diretivas CSP aqui
+            connectSrc: ["'self'", 'http://cloudfront.flipay.com.br', `https://${process.env.BASEURL}`],
         },
     })
 );
