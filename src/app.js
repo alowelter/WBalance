@@ -111,7 +111,7 @@ async function main() {
 
         const proxy = createProxyMiddleware({
             target: getServer(), // Seleciona aleatoriamente um servidor de destino
-            changeOrigin: true,
+            changeOrigin: false,
         });
 
         app.use('/', proxy);
