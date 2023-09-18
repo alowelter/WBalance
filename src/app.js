@@ -74,10 +74,15 @@ let currIndex = 0;
 
 // Get next server
 function getServer() {
-    // Round robin
-    currIndex = (currIndex + 1) % instances.length;
+    try {
+        // Round robin
+        currIndex = (currIndex + 1) % instances.length;
 
-    return instances[currIndex];
+        return instances[currIndex];
+    } catch (error) {
+        console.log('🔴 Erro ao obtendo instancia.', error);
+        return {};
+    }
 }
 
 /*
