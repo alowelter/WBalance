@@ -131,24 +131,28 @@ setInterval(async () => {
     const promises = instances.map(async (instance) => {
         try {
             if (instance.status === 'active') {
-                // Faça uma solicitação HTTP para obter o uso de CPU de cada instância
-                const response = await axios.get(`http://${instance.internal_ip}/cpu.php`);
+                try {
+                    // Faça uma solicitação HTTP para obter o uso de CPU de cada instância
+                    const response = await axios.get(`http://${instance.internal_ip}/cpu.php`);
 
-                // Verifique se a resposta foi bem-sucedida
-                if (response.status === 200) {
-                    // Use uma expressão regular para extrair a porcentagem de uso da CPU
-                    const cpuUsageMatch = response.data.match(/CPU:(\d+)%/);
-                    if (cpuUsageMatch && cpuUsageMatch[1]) {
-                        const cpuUsage = parseInt(cpuUsageMatch[1], 10);
+                    // Verifique se a resposta foi bem-sucedida
+                    if (response.status === 200) {
+                        // Use uma expressão regular para extrair a porcentagem de uso da CPU
+                        const cpuUsageMatch = response.data.match(/CPU:(\d+)%/);
+                        if (cpuUsageMatch && cpuUsageMatch[1]) {
+                            const cpuUsage = parseInt(cpuUsageMatch[1], 10);
 
-                        // Adicione a propriedade 'cpu' ao objeto da instância com o percentual de uso
-                        instance.cpu = cpuUsage > 1 ? cpuUsage : 1;
-                        console.log(`🔹 ${instance.internal_ip} > CPU Usage: ${cpuUsage}%`);
+                            // Adicione a propriedade 'cpu' ao objeto da instância com o percentual de uso
+                            instance.cpu = cpuUsage > 1 ? cpuUsage : 1;
+                            console.log(`🔹 ${instance.internal_ip} > CPU Usage: ${cpuUsage}%`);
+                        } else {
+                            console.log(`🔹 ${instance.internal_ip} > CPU Usage not found in response`);
+                        }
                     } else {
-                        console.log(`🔹 ${instance.internal_ip} > CPU Usage not found in response`);
+                        console.log(`🔹 ${instance.internal_ip} > CPU Usage request failed`);
                     }
-                } else {
-                    console.log(`🔹 ${instance.internal_ip} > CPU Usage request failed`);
+                } catch (error) {
+                    console.error(`🔹 ${instance.internal_ip} > Error: ${error.message}`);
                 }
             } else {
                 instance.cpu = 0;
