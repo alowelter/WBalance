@@ -175,9 +175,13 @@ async function serverImprove() {
                             target: proxyurl,
                             changeOrigin: false,
                             logLevel: 'warn',
-                            //onProxyReq: (proxyReq, req, res) => {
-                            //    proxyReq.setHeader('x_auth_user', req.user.email);
-                            //},
+                            onProxyRes: (proxyRes, req, res) => {
+                                // Verificar se o cabeçalho CSP está presente na resposta do servidor de destino
+                                if (proxyRes.headers['content-security-policy']) {
+                                    // Copiar o cabeçalho CSP da resposta do servidor de destino para a resposta ao cliente
+                                    res.setHeader('content-security-policy', proxyRes.headers['content-security-policy']);
+                                }
+                            },
                         });
                     }
                 } catch (error) {
