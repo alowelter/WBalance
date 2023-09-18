@@ -21,9 +21,9 @@ cronController.scheduleTask();
 
 // API
 const api = require('./controllers/ApiController');
-const mysql = require('mysql2');
-const database = mysql.createConnection(process.env.DATABASE_URL);
-console.log('🟢 Mysql - PlanetScale');
+//const mysql = require('mysql2');
+//const database = mysql.createConnection(process.env.DATABASE_URL);
+//console.log('🟢 Mysql - PlanetScale');
 
 // handles
 
