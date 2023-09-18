@@ -118,14 +118,14 @@ app.get('/ping', (req, res) => {
 });
 
 app.use(async (req, res, next) => {
-    console.log(`🔸 {${req.method}} -> ${req.path}`);
-
+    const target = getServer();
     const proxy = createProxyMiddleware({
-        target: getServer(),
+        target: target,
         changeOrigin: false,
         plugins: [proxyLog],
         logLevel: 'warn',
     });
+    console.log(`🔸 {${req.method}} > ${req.path} 🔜 ${target}`);
 
     proxy(req, res, next);
 });
