@@ -23,7 +23,7 @@ app.use(
     helmet.contentSecurityPolicy({
         directives: {
             // Adicione ou modifique as diretivas CSP conforme necessário
-            scriptSrc: ["'self'", `https://${process.env.BASEURL}`],
+            scriptSrc: ["'self'", "'unsafe-inline'", `https://${process.env.BASEURL}`],
             // Outras diretivas CSP aqui
         },
     })
