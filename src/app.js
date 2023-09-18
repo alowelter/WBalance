@@ -28,7 +28,7 @@ app.use(
             // Diretiva para carregar frames apenas do mesmo domínio
             frameSrc: ["'self'", `https://cloudfront.flipay.com.br`, 'blob:'],
             // Permitir imagens de qualquer fonte, incluindo 'data:' e 'https://s.w.org'
-            imgSrc: ["'self'", 'data:', 'blob:', `blob:https://${process.env.BASEURL}`],
+            imgSrc: ["'self'", 'data:', 'blob:', 'https://*.gravatar.com', `blob:https://${process.env.BASEURL}`],
             // Outras diretivas CSP aqui
         },
     })
