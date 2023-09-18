@@ -1,4 +1,4 @@
-const api = require('./api');
+const api = require('./ApiController');
 require('dotenv').config();
 
 const instanceScript = `#cloud-config
