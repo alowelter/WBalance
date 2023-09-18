@@ -55,7 +55,6 @@ if (fs.existsSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`)) {
         console.log(`🔶 Resultado: ${stdout}`);
         console.error(`🔴 Erros do comando: ${stderr}`);
     });
-    process.exit(1);
 }
 
 http.createServer(app).listen(3001, () => {
@@ -82,6 +81,11 @@ function getServer() {
     try {
         // Round robin
         currIndex = (currIndex + 1) % instances.length;
+
+        // if instace.active not active get another
+        if (instances[currIndex].status != 'active') {
+            return getServer();
+        }
 
         const target = instances[currIndex];
         return `http://${target.internal_ip}/`;

@@ -87,13 +87,12 @@ runcmd:
   - mount -t nfs 10.43.96.3:/storage /usr/share/nginx/html
   - echo "10.43.96.3:/storage /usr/share/nginx/html nfs defaults 0 0" >> /etc/fstab
   - firewall-cmd --zone=public --add-service=http --permanent
-  - firewall-cmd --reload
+  - firewall-cmd --zone=public --add-port=80/tcp --permanent
+  - systemctl enable nginx
+  - systemctl enable php-fpm
+  - reboot
 
-power_state:
-  delay: "now"
-  mode: reboot
-  message: Reboot after install
-  condition: True`;
+`;
 
 exports.Create = async (req, res, next) => {
     try {
