@@ -110,10 +110,6 @@ async function main() {
         const proxy = createProxyMiddleware({
             target: getServer(), // Seleciona aleatoriamente um servidor de destino
             changeOrigin: true,
-            onProxyRes(proxyRes) {
-                // Aqui você pode adicionar qualquer manipulação adicional de resposta, se necessário
-                proxyRes.setHeader('X-Special-Proxy-Header', 'WBalance');
-            },
         });
 
         app.use('/', proxy);
