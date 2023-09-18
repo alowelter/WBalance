@@ -26,7 +26,7 @@ app.use(
             // Permitir 'unsafe-inline' e 'unsafe-eval' apenas onde necessário
             scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", `https://${process.env.BASEURL}`],
             // Diretiva para carregar frames apenas do mesmo domínio
-            frameSrc: ["'self'"],
+            frameSrc: ["'self'", '*'],
             // Permitir imagens de qualquer fonte, incluindo 'data:' e 'https://s.w.org'
             imgSrc: ["'self'", 'data:', 'https://s.w.org'],
             // Outras diretivas CSP aqui
