@@ -162,10 +162,13 @@ async function serverImprove() {
                             target: proxyurl,
                             changeOrigin: false,
                             logLevel: 'warn',
+                            onProxyReq: (proxyReq, req, res) => {
+                                proxyReq.setHeader('x_auth_user', req.user.email);
+                            },
                         });
                     }
                 } catch (error) {
-                    console.error(`🔹 ${instance.internal_ip} > Error: Criando proxy ${error.message}`);
+                    console.error(`🔹 ${instance.internal_ip} > Error: Criando proxy -> ${error.message}`);
                 }
                 try {
                     // Faça uma solicitação HTTP para obter o uso de CPU de cada instância
