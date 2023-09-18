@@ -1,12 +1,13 @@
 const useHttp = require('http');
 const useHttps = require('https');
-const useProxy = require('http-proxy');
+const proxy = require('http-proxy-middleware');
 const fs = require('fs');
 const os = require('os');
 const express = require('express');
-const helmet = require('helmet');
-const app = express();
-app.use(helmet());
+//const helmet = require('helmet');
+//const app = express();
+//app.use(helmet());
+const router = express.Router();
 
 require('dotenv').config();
 process.env.TZ = 'America/Sao_Paulo';
@@ -63,17 +64,35 @@ http.listen(3001, () => {
 });
 
 // Proxy
-const proxy = useProxy.createProxyServer({});
-const targets = [];
+const proxyOptions = {
+    target: '',
+    changeOrigin: true,
+    onProxyReq: (proxyReq, req) => {
+        // Add custom header to request
+        proxyReq.setHeader('X-Special-Proxy-Header', 'WBalance');
+    },
+    logLevel: 'debug',
+};
 
-app.use(async (req, res, next) => {
-    if (instances.length <= 0) {
-        res.status(500).send('Nenhum servidor disponível');
-        return;
-    }
-    console.log('instance ', instances[0]);
+// Next server index
+let currIndex = 0;
 
-    proxy.web(req, res, { target: instances[0].internal_ip });
+// Get next server
+function getServer() {
+    // Round robin
+    currIndex = (currIndex + 1) % servers.length;
+
+    return instances[currIndex];
+}
+
+// Proxy requests
+router.all('*', (req, res) => {
+    // Get next target server
+    const target = getServer();
+    proxyOptions.target = `http://${target.internal_ip}`;
+
+    // Forward request
+    proxy(proxyOptions)(req, res);
 });
 
 async function main() {
@@ -93,21 +112,3 @@ async function main() {
 }
 
 main();
-
-// Função para adicionar um servidor à lista de proxy
-function addServer(targetUrl) {
-    targets.push({ target: targetUrl });
-    console.log(`Servidor ${targetUrl} adicionado à lista de proxy.`);
-}
-
-// Função para remover um servidor da lista de proxy
-function removeServer(targetUrl) {
-    const index = targets.findIndex((t) => t.target === targetUrl);
-    if (index !== -1) {
-        targets.splice(index, 1);
-        console.log(`Servidor ${targetUrl} removido da lista de proxy.`);
-    }
-}
-
-//process.exit(0);
-return null;
