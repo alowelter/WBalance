@@ -183,7 +183,7 @@ app.get('/add-instance', async (req, res, next) => {
 
 app.use(async (req, res, next) => {
     const target = getServer();
-    console.log(`🔸 {${req.method}} > ${req.path} 🔜 ${target}`);
+    console.log(`🔸 {${req.method}} > ${req.path} 🔜 ${target.internal_ip}`);
     target.proxy(req, res, next);
 });
 
