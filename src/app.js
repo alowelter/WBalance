@@ -58,6 +58,25 @@ http.createServer(app).listen(3001, () => {
     console.log('🟢 HTTP Running - Port 3001');
 });
 
+async function main() {
+    try {
+        const instancesResponse = await api.instances();
+        instances = instancesResponse.data.instances;
+        console.log('🟢 Instances', instances.length);
+
+        const loadbalanceResponse = await api.loadbalance();
+        loadbalance = loadbalanceResponse.data.instances;
+        console.log('🟢 Loadbalance', loadbalance.length);
+    } catch (error) {
+        console.error('Ocorreu um erro ao buscar dados da API:', error);
+        // Trate o erro de inicialização, se necessário
+        process.exit(1); // Encerra o aplicativo com um código de erro
+    }
+}
+
+main();
+
+// -----------------------------------------------------
 // Proxy
 const proxyOptions = {
     target: '',
@@ -85,36 +104,6 @@ function getServer() {
     }
 }
 
-/*
-// Proxy requests
-router.all('*', (req, res) => {
-    // Get next target server
-    const target = getServer();
-    proxyOptions.target = `http://${target.internal_ip}`;
-
-    // Forward request
-    proxy(proxyOptions)(req, res);
-});
-*/
-
-async function main() {
-    try {
-        const instancesResponse = await api.instances();
-        instances = instancesResponse.data.instances;
-        console.log('🟢 Instances', instances.length);
-
-        const loadbalanceResponse = await api.loadbalance();
-        loadbalance = loadbalanceResponse.data.instances;
-        console.log('🟢 Loadbalance', loadbalance.length);
-    } catch (error) {
-        console.error('Ocorreu um erro ao buscar dados da API:', error);
-        // Trate o erro de inicialização, se necessário
-        process.exit(1); // Encerra o aplicativo com um código de erro
-    }
-}
-
-main();
-
 app.get('/ping', (req, res) => {
     return res.send('pong');
 });
@@ -127,5 +116,6 @@ app.use(async (req, res, next) => {
     proxyOptions.target = `http://${target.internal_ip}`;
 
     // Forward request
-    proxy(proxyOptions)(req, res);
+    //proxy(proxyOptions)(req, res);
+    proxy.createProxyMiddleware(proxyOptions)(req, res, next);
 });
