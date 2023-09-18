@@ -1,21 +1,11 @@
 const api = require('./ApiController');
 
 exports.Instances = async () => {
-    api.Get('/instances')
-        .then((response) => {
-            return response.data;
-        })
-        .catch((error) => {
-            return error;
-        });
+    let response = await api.Get('/instances');
+    return response.data.instances;
 };
 
 exports.LoadBalance = async (req, res) => {
-    api.Get('/instances')
-        .then((response) => {
-            return response.data;
-        })
-        .catch((error) => {
-            return error;
-        });
+    let response = await api.Get('/instances');
+    return response.data.instances;
 };
