@@ -93,12 +93,17 @@ const proxyLog = (proxyServer, options) => {
     });
 };
 
+setInterval(async () => {
+    const instancesResponse = await api.instances();
+    instances = instancesResponse.data.instances;
+    console.log('🟢 Refresh Instances', instances.length);
+}, 60 * 1000); // 1 minuto
+
 async function main() {
     try {
         const instancesResponse = await api.instances();
         instances = instancesResponse.data.instances;
-        instances = [...instances, { internal_ip: '190.124.46.242' }];
-        console.log('🟢 Instances', instances.length);
+        console.log('🟢 Instances', instances.length, instances);
 
         const loadbalanceResponse = await api.loadbalance();
         loadbalance = loadbalanceResponse.data.instances;
