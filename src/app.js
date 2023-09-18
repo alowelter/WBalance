@@ -99,8 +99,7 @@ async function main() {
         console.log('🟢 Instances', instances.length);
 
         const loadbalanceResponse = await api.loadbalance();
-        console.log('>>>>', loadbalanceResponse.data);
-        loadbalance = loadbalanceResponse.data;
+        loadbalance = loadbalanceResponse.data.instances;
         console.log('🟢 Loadbalance', loadbalance.length);
     } catch (error) {
         console.error('Ocorreu um erro ao buscar dados da API:', error);
