@@ -41,16 +41,19 @@ firewall-cmd --add-service={nfs,nfs3,mountd,rpc-bind, http, https, ftp}
 firewall-cmd --runtime-to-permanent
 firewall-cmd --reload
 
-dnf install nodejs 
+dnf install nodejs -y
 npm install pm2 -g
 cd /
 git clone https://github.com/alowelter/WBalance.git
 cd WBalance
 npm install
+
+dnf install certbot -y
+certbot certonly
+
+
 pm2 start pm2.json
 
-dnf install certbot
-certbot certonly
 
 
 
