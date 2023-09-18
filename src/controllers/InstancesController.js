@@ -96,12 +96,15 @@ power_state:
   condition: True`;
 
 exports.Create = async (req, res, next) => {
+    // convertstring to base64
+    const base64 = Buffer.from(instanceScript).toString('base64');
+
     const params = {
         region: 'ewr',
         plan: 'vc2-6c-16gb',
         label: `${process.env.VULTR_SERVER_LABEL_PREFIX}_webserver`,
         os_id: 215,
-        user_data: instanceScript.tobase64(), // Certifique-se de que instanceScript esteja definido corretamente
+        user_data: base64, // Certifique-se de que instanceScript esteja definido corretamente
         backups: 'disabled',
         hostname: `${process.env.VULTR_SERVER_LABEL_PREFIX}_webserver`,
         tags: ['webserver'],
