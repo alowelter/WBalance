@@ -27,8 +27,8 @@ app.use(
             scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", `https://${process.env.BASEURL}`],
             // Diretiva para carregar frames apenas do mesmo domínio
             frameSrc: ["'self'"],
-            // Diretiva para carregar imagens de qualquer fonte
-            imgSrc: ["'self'", 'data:'],
+            // Diretiva para carregar imagens de qualquer fonte, incluindo 'data:'
+            imgSrc: ["'self'", 'data:', 'https://s.w.org'],
             // Outras diretivas CSP aqui
         },
     })
