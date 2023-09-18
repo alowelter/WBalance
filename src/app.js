@@ -32,6 +32,7 @@ app.use(
             imgSrc: ["'self'", 'data:', 'blob:', 'https://*.gravatar.com', 'https://s.w.org'],
             // Outras diretivas CSP aqui
             connectSrc: ["'self'", 'http://cloudfront.flipay.com.br', `https://${process.env.BASEURL}`],
+            formAction: ["'self'", 'https://cloudfront.flipay.com.br'],
         },
     })
 );
