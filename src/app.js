@@ -255,7 +255,6 @@ async function serverImprove() {
     instances.forEach((instance) => {
         cpuUsageSum += instance.cpu;
     });
-    console.log('xxx', cpuUsageSum, instances.length);
 
     cpuUsageAverage = Math.round(cpuUsageSum / instances.length);
     if (instances.length < 1) {
