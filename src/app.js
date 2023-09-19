@@ -130,7 +130,7 @@ app.get('/cpu', async (req, res) => {
         result.cpu = stdout;
     });
     return res.status(200).json(result);
-}
+});
 
 // Auto-deploy
 app.get('/deploy', async (req, res, next) => {
