@@ -67,19 +67,9 @@ http.createServer(app).listen(3001, () => {
 
 // -----------------------------------------------------
 // Proxy
-const proxyOptions = {
-    target: '',
-    changeOrigin: true,
-    onProxyReq: (proxyReq, req) => {
-        // Add custom header to request
-        proxyReq.setHeader('X-Special-Proxy-Header', 'WBalance');
-    },
-    logLevel: 'warn',
-};
 
 // Next server index
 let currIndex = 0;
-
 // Get next server
 function getServer() {
     try {
@@ -168,7 +158,7 @@ async function serverImprove() {
                 let proxyurl = `https://${_instance.internal_ip}/`;
                 _instance.proxy = createProxyMiddleware({
                     target: proxyurl,
-                    logLevel: 'debug',
+                    logLevel: 'warn',
                     onProxyRes: (proxyRes, req, res) => {
                         proxyRes.headers['Server'] = 'WBalance by Welm 09/2023 ';
                     },
