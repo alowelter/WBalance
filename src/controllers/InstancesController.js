@@ -36,7 +36,7 @@ write_files:
       sendfile            on;
       tcp_nopush          on;
       tcp_nodelay         on;
-      keepalive_timeout   75;
+      keepalive_timeout   65;
       types_hash_max_size 4096;
       include             /etc/nginx/mime.types;
       default_type        application/octet-stream;
