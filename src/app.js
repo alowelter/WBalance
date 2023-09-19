@@ -257,7 +257,9 @@ async function serverImprove() {
     }
     console.log('🟣 Servidores: ', instances.length, 'CPU médio: ', cpuUsageAverage, '%');
     if (cpuUsageAverage > 80) {
-        console.log('🔴 CPU médio acima de 80% - Criando 1');
-        InstancesController.Create();
+        if (instances.length < process.env.INSTANCES_MAX) {
+            console.log('🔴 CPU médio acima de 80% - Criando 1');
+            InstancesController.Create();
+        }
     }
 }
