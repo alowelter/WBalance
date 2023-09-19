@@ -190,7 +190,7 @@ async function serverImprove() {
     local_instances = instancesResponse.data.instances;
     const promises = local_instances.map(async (_instance) => {
         let i = null;
-        if (instance) {
+        if (instances) {
             i = instances.find((instance) => instance.id === _instance.id);
         }
         if (!i) {
