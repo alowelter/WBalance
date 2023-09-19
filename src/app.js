@@ -188,7 +188,7 @@ app.use(async (req, res, next) => {
 async function serverImprove() {
     const instancesResponse = await api.instances();
     instances = instancesResponse.data.instances;
-    console.log('🟣 Refresh Instances', instances.length);
+    console.log('🟣 Refresh Instances', instances.length, instances);
 
     const promises = instances.map(async (instance) => {
         try {
