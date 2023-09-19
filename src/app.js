@@ -184,6 +184,7 @@ async function serverImprove() {
     api.instances().then((response) => {
         if (response.status == 200) {
             let _instances = response.data.instances;
+            console.log('x', _instances.length);
             if (_instances.length < 1) {
                 console.log('🔴 Nenhuma instancia encontrada - Criando 1');
                 InstancesController.Create();
