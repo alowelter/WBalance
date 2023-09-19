@@ -165,7 +165,7 @@ async function serverImprove() {
         }
         if (!i) {
             if (_instance.status === 'active') {
-                let proxyurl = `http://${_instance.internal_ip}/`;
+                let proxyurl = `https://${_instance.internal_ip}/`;
                 _instance.proxy = createProxyMiddleware({
                     target: proxyurl,
                     logLevel: 'debug',
@@ -180,7 +180,7 @@ async function serverImprove() {
         try {
             if (_instance.status === 'active') {
                 try {
-                    const response = await axios.get(`https://${_instance.internal_ip}/cpu.php`);
+                    const response = await axios.get(`http://${_instance.internal_ip}/cpu.php`);
                     if (response.status === 200) {
                         const cpuUsageMatch = response.data.match(/CPU:(\d+)%/);
                         if (cpuUsageMatch && cpuUsageMatch[1]) {
