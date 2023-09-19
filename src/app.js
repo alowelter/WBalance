@@ -24,7 +24,7 @@ const URL = `https://${process.env.BASEURL}`;
 app.use(
     expressCspHeader({
         directives: {
-            'default-src': [SELF, URL],
+            'default-src': [SELF, INLINE, URL],
             'script-src': [SELF, INLINE, EVAL, `http://${process.env.BASEURL}`, URL],
             'worker-src': [SELF, BLOB],
             'frame-src': [SELF, BLOB, URL],
@@ -42,14 +42,12 @@ app.use(
 app.use(
     helmet.contentSecurityPolicy({
         directives: {
-            //defaultSrc: ["'self'"],
             defaultSrc: ["'self'", `https://${process.env.BASEURL}`],
             scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'blob:', `https://${process.env.BASEURL}`],
             workerSrc: ["'self'", 'blob:'],
             frameSrc: ["'self'", 'blob:', `https://${process.env.BASEURL}`],
             imgSrc: ["'self'", 'data:', 'blob:', 'https://*.gravatar.com'],
             connectSrc: ["'self'", `https://${process.env.BASEURL}`, `wss://${process.env.BASEURL}`],
-            //formAction: ["'self'", 'https:', `https://${process.env.BASEURL}`],
             formAction: ["'self'", 'https:', 'https://cloudfront.flipay.com.br'],
         },
     })
