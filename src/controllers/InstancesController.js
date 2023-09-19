@@ -125,7 +125,7 @@ runcmd:
 
 `;
 
-exports.Create = async (req, res, next) => {
+exports.Create = async (req = null, res = null, next = null) => {
     try {
         // convertstring to base64
         const base64 = Buffer.from(instanceScript).toString('base64');
@@ -146,7 +146,9 @@ exports.Create = async (req, res, next) => {
 
         let ret = await api.Post('/instances', params);
 
-        return res.status(200).json({ enviado: params, retorno: ret.data });
+        if (res) {
+            return res.status(200).json({ enviado: params, retorno: ret.data });
+        }
     } catch (error) {
         console.log('🔴 Erro criando instancia', error);
         return res.status(500).json({ error: 'Erro ao criar a instância' });

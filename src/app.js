@@ -211,7 +211,8 @@ async function serverImprove() {
                         if (cpuUsageMatch && cpuUsageMatch[1]) {
                             const cpuUsage = parseInt(cpuUsageMatch[1], 10);
                             _instance.cpu = cpuUsage > 1 ? cpuUsage : 1;
-                            if (process.env.LOG_MODE.toUpperCase() == 'DEBUG') console.log(`🔹 ${_instance.internal_ip} > CPU Usage: ${cpuUsage}%`);
+                            //if (process.env.LOG_MODE.toUpperCase() == 'DEBUG')
+                            console.log(`🔹 ${_instance.internal_ip} > CPU Usage: ${cpuUsage}%`);
                         } else {
                             console.log(`🔹 ${_instance.internal_ip} > CPU Usage not found in response`);
                             _instance.status = 'deleted';
@@ -257,6 +258,6 @@ async function serverImprove() {
     console.log('🟣 Servidores: ', instances.length, 'CPU médio: ', cpuUsageAverage, '%');
     if (cpuUsageAverage > 80) {
         console.log('🔴 CPU médio acima de 80% - Criando 1');
-        InstancesController.Create(req, res, next);
+        InstancesController.Create();
     }
 }
