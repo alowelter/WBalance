@@ -188,64 +188,50 @@ app.use(async (req, res, next) => {
 async function serverImprove() {
     const instancesResponse = await api.instances();
     local_instances = instancesResponse.data.instances;
-    console.log('🟣 Refresh Instances', local_instances.length, instances);
-
     const promises = local_instances.map(async (_instance) => {
-        let instance = instances.find((instance) => instance.id === _instance.id) || null;
-        if (!instance) {
-            instance = _instance;
-            instances.push(instance);
+        let i = instances.find((instance) => instance.id === _instance.id);
+        if (!i) {
+            if (_instance.status === 'active') {
+                let proxyurl = `http://${_instance.internal_ip}`;
+                _instance.proxy = createProxyMiddleware({
+                    target: proxyurl,
+                    logLevel: 'warn',
+                    //onProxyRes: (proxyRes, req, res) => {
+                    //    if (proxyRes.headers['content-security-policy']) {
+                    //        const currentCSP = proxyRes.headers['content-security-policy'];
+                    //        const newCSP = `${currentCSP} script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'`;
+                    //        proxyRes.headers['content-security-policy'] = newCSP;
+                    //    }
+                    //}
+                });
+                _instance.cpu = 0;
+                instances.push(_instance);
+            }
         }
         try {
-            if (instance.status === 'active') {
+            if (_instance.status === 'active') {
                 try {
-                    if (!instance.hasOwnProperty('proxy')) {
-                        let proxyurl = `http://${instance.internal_ip}/`;
-                        instance.proxy = createProxyMiddleware({
-                            target: proxyurl,
-                            logLevel: 'warn',
-                            onProxyRes: (proxyRes, req, res) => {
-                                // Verificar se o cabeçalho CSP está presente na resposta do servidor de destino
-                                if (proxyRes.headers['content-security-policy']) {
-                                    // Modificar o cabeçalho CSP conforme necessário
-                                    const currentCSP = proxyRes.headers['content-security-policy'];
-                                    const newCSP = `${currentCSP} script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'`;
-                                    proxyRes.headers['content-security-policy'] = newCSP;
-                                }
-                            },
-                        });
-                    }
-                } catch (error) {
-                    console.error(`🔹 ${instance.internal_ip} > Error: Criando proxy -> ${error.message}`);
-                }
-                try {
-                    // Faça uma solicitação HTTP para obter o uso de CPU de cada instância
-                    const response = await axios.get(`http://${instance.internal_ip}/cpu.php`);
-
-                    // Verifique se a resposta foi bem-sucedida
+                    const response = await axios.get(`http://${_instance.internal_ip}/cpu.php`);
                     if (response.status === 200) {
-                        // Use uma expressão regular para extrair a porcentagem de uso da CPU
                         const cpuUsageMatch = response.data.match(/CPU:(\d+)%/);
                         if (cpuUsageMatch && cpuUsageMatch[1]) {
                             const cpuUsage = parseInt(cpuUsageMatch[1], 10);
-
-                            // Adicione a propriedade 'cpu' ao objeto da instância com o percentual de uso
-                            instance.cpu = cpuUsage > 1 ? cpuUsage : 1;
-                            console.log(`🔹 ${instance.internal_ip} > CPU Usage: ${cpuUsage}%`);
+                            _instance.cpu = cpuUsage > 1 ? cpuUsage : 1;
+                            console.log(`🔹 ${_instance.internal_ip} > CPU Usage: ${cpuUsage}%`);
                         } else {
-                            console.log(`🔹 ${instance.internal_ip} > CPU Usage not found in response`);
+                            console.log(`🔹 ${_instance.internal_ip} > CPU Usage not found in response`);
                         }
                     } else {
-                        console.log(`🔹 ${instance.internal_ip} > CPU Usage request failed`);
+                        console.log(`🔹 ${_instance.internal_ip} > CPU Usage request failed`);
                     }
                 } catch (error) {
-                    console.error(`🔹 ${instance.internal_ip} > Error: ${error.message}`);
+                    console.error(`🔹 ${_instance.internal_ip} > Error: ${error.message}`);
                 }
             } else {
-                instance.cpu = 0;
+                _instance.cpu = 0;
             }
         } catch (error) {
-            console.error(`🔹 ${instance.internal_ip} > Error: ${error.message}`);
+            console.error(`🔹 ${_instance.internal_ip} > Error: ${error.message}`);
         }
     });
     await Promise.all(promises);
@@ -271,5 +257,6 @@ async function serverImprove() {
         console.log('🔴 Nenhuma instancia encontrada - Criando 1');
         InstancesController.Create(req, res, next);
     }
+    console.log('🟣 Refresh Instances', instances.length);
     console.log(`🔹 Uso CPU médio: ${cpuUsageAverage}%`);
 }
