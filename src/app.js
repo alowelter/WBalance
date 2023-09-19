@@ -217,23 +217,25 @@ async function serverImprove() {
                 }
             });
             instances = instances.filter((instance) => instance.status != 'deleted');
-            let cpuUsageSum = 0;
-            instances.forEach((instance) => {
-                cpuUsageSum += instance.cpu;
-            });
-            let cpuUsageAverage = Math.round(cpuUsageSum / instances.length);
-            console.log('🟣 Servidores: ', instances.length, ' - CPU total: ', cpuUsageAverage, '%');
-            if (cpuUsageAverage >= 80) {
-                if (instances.length < process.env.INSTANCES_MAX) {
-                    console.log('🔴 CPU total acima de 80% - Criando 1');
-                    InstancesController.Create();
+            if (instances.length > 0) {
+                let cpuUsageSum = 0;
+                instances.forEach((instance) => {
+                    cpuUsageSum += instance.cpu;
+                });
+                let cpuUsageAverage = Math.round(cpuUsageSum / instances.length);
+                console.log('🟣 Servidores: ', instances.length, ' - CPU total: ', cpuUsageAverage, '%');
+                if (cpuUsageAverage >= 80) {
+                    if (instances.length < process.env.INSTANCES_MAX) {
+                        console.log('🔴 CPU total acima de 80% - Criando 1');
+                        InstancesController.Create();
+                    }
                 }
-            }
-            if (cpuUsageAverage < 40) {
-                if (instances.length > process.env.INSTANCES_MIN) {
-                    console.log('🟡 CPU total inferior a 40% - liberando instancia');
-                    let lastinstance = instances[instances.length - 1];
-                    InstancesController.Destroy(lastinstance.id);
+                if (cpuUsageAverage < 40) {
+                    if (instances.length > process.env.INSTANCES_MIN) {
+                        console.log('🟡 CPU total inferior a 40% - liberando instancia');
+                        let lastinstance = instances[instances.length - 1];
+                        InstancesController.Destroy(lastinstance.id);
+                    }
                 }
             }
         }
