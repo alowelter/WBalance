@@ -49,6 +49,7 @@ exports.Cpu = async (instance) => {
                     let cpuUsage = parseInt(cpuUsageMatch[1], 10);
                     if (cpuUsage > 100) cpuUsage = 100;
                     if (cpuUsage < 1) puUsage = 1;
+                    console.log('0 cpu', cpuUsage, response);
                     resolve(cpuUsage);
                 }
             } else {
