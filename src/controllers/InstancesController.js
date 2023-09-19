@@ -36,7 +36,7 @@ write_files:
       sendfile            on;
       tcp_nopush          on;
       tcp_nodelay         on;
-      keepalive_timeout   65;
+      keepalive_timeout   75;
       types_hash_max_size 4096;
       include             /etc/nginx/mime.types;
       default_type        application/octet-stream;
@@ -82,6 +82,10 @@ write_files:
           add_header Cache-Control "public, max-age=2592000";
           try_files $uri =404;
         }
+        gzip on;
+        gzip_disable "msie6";
+        gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+        gzip_vary on;
       }
     }
   path: /etc/nginx/nginx.conf
