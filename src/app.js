@@ -184,7 +184,7 @@ async function serverImprove() {
     api.instances().then((response) => {
         if (response.status == 200) {
             let _instances = response.data.instances;
-            console.log('x', _instances.length);
+            console.log('get from api', _instances.length);
             if (_instances.length < 1) {
                 console.log('🔴 Nenhuma instancia encontrada - Criando 1');
                 InstancesController.Create();
@@ -219,7 +219,7 @@ async function serverImprove() {
                     if (instance.cpu < 0) {
                         instance.status = 'deleted';
                     } else {
-                        console.log(`🔹 ${instance.internal_ip} > CPU Usage: ${cpuUsage}%`);
+                        console.log(`🔹 ${instance.internal_ip} > CPU Usage: ${instance.cpu}%`);
                     }
                 }
             });
