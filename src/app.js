@@ -26,7 +26,7 @@ app.use(
             'script-src': [SELF, INLINE, EVAL, BLOB, `https://${process.env.BASEURL}`],
             'style-src': [SELF, INLINE, `https://${process.env.BASEURL}`],
             'img-src': [SELF, DATA, `https://${process.env.BASEURL}`],
-            'worker-src': [NONE, `https://${process.env.BASEURL}`],
+            'worker-src': [SELF, BLOB],
             'block-all-mixed-content': true,
         },
     })
