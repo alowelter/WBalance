@@ -219,4 +219,8 @@ async function serverImprove() {
     }
     console.log('🟣 Refresh Instances', instances.length);
     console.log(`🔹 Uso CPU médio: ${cpuUsageAverage}%`);
+    if (cpuUsageAverage > 80) {
+        console.log('🔴 CPU médio acima de 80% - Criando 1');
+        InstancesController.Create(req, res, next);
+    }
 }
