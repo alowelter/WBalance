@@ -148,3 +148,14 @@ exports.Create = async (req, res, next) => {
         return res.status(500).json({ error: 'Erro ao criar a instância' });
     }
 };
+
+exports.Destroy = async (id) => {
+    try {
+        console.log(`🟠 Excluindo instancia ${id}`);
+        let ret = await api.Delete(`/instances/${id}`);
+        return ret.data;
+    } catch (error) {
+        console.log('🔴 Erro excluindo instancia', error);
+        return null;
+    }
+};
