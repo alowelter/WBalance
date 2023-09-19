@@ -24,7 +24,7 @@ app.use(
         directives: {
             'default-src': [SELF, `https://${process.env.BASEURL}`],
             'script-src': [SELF, INLINE, EVAL, BLOB, `https://${process.env.BASEURL}`],
-            'script-src-elem': [SELF, INLINE, EVAL, BLOB, `https://${process.env.BASEURL}`],
+            'script-src': [SELF, INLINE, EVAL, `http://${process.env.BASEURL}`, `https://${process.env.BASEURL}`],
             'worker-src': [SELF, BLOB],
             'frame-src': [SELF, BLOB, `https://${process.env.BASEURL}`],
             'img-src': [SELF, DATA, BLOB],
