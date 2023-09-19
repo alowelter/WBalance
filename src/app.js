@@ -184,7 +184,6 @@ async function serverImprove() {
     api.instances().then((response) => {
         if (response.status == 200) {
             let _instances = response.data.instances;
-            console.log('get from api', _instances.length);
             if (_instances.length < 1) {
                 console.log('🔴 Nenhuma instancia encontrada - Criando 1');
                 InstancesController.Create();
@@ -194,7 +193,6 @@ async function serverImprove() {
                     let found = instances.find((instance) => instance.id === _instance.id) || null;
                     if (!found) {
                         _instance.cpu = await api.Cpu(_instance);
-                        console.log('***', _instance.cpu);
                         if (_instance.cpu >= 0) {
                             _instance.proxy = createProxyMiddleware({
                                 target: `https://${_instance.internal_ip}/`,
@@ -213,22 +211,18 @@ async function serverImprove() {
                 let _instance = _instances.find((_instance) => _instance.id === instance.id) || null;
                 if (!_instance) instance.status = 'deleted';
             });
-            instances.forEach(async (instance) => {
-                if (instance.status !== 'deleted') {
+            instances = instances.filter((instance) => instance.status != 'deleted');
+            if (instances.length > 0) {
+                console.log('🟣 Servidores: ', instances.length);
+                let cpuUsageSum = 0;
+                instances.forEach(async (instance) => {
                     instance.cpu = await api.Cpu(instance);
                     if (instance.cpu < 0) {
                         instance.status = 'deleted';
                     } else {
                         console.log(`🔹 ${instance.internal_ip} > CPU Usage: ${instance.cpu}%`);
+                        cpuUsageSum += instance.cpu;
                     }
-                }
-            });
-            instances = instances.filter((instance) => instance.status != 'deleted');
-            console.log('🟣 Servidores: ', instances.length);
-            if (instances.length > 0) {
-                let cpuUsageSum = 0;
-                instances.forEach((instance) => {
-                    cpuUsageSum += instance.cpu;
                 });
                 let cpuUsageAverage = Math.round(cpuUsageSum / instances.length);
                 console.log('🟣 CPU total: ', cpuUsageAverage, '%');
