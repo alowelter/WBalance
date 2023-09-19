@@ -209,7 +209,7 @@ async function serverImprove() {
                     if (response.status === 200) {
                         const cpuUsageMatch = response.data.match(/CPU:(\d+)%/);
                         if (cpuUsageMatch && cpuUsageMatch[1]) {
-                            const cpuUsage = parseInt(cpuUsageMatch[1], 10);
+                            let cpuUsage = parseInt(cpuUsageMatch[1], 10);
                             if (cpuUsage > 100) cpuUsage = 100;
                             if (cpuUsage < 1) puUsage = 1;
                             _instance.cpu = cpuUsage;
