@@ -259,7 +259,7 @@ async function serverImprove() {
         console.log('🔴 Nenhuma instancia encontrada - Criando 1');
         InstancesController.Create();
     }
-    console.log('🟣 Servidores: ', instances.length, ' - CPU total: ', cpuUsageAverage.toFixed(2), '%');
+    console.log('🟣 Servidores: ', instances.length, ' - CPU total: ', cpuUsageAverage, '%');
     if (cpuUsageAverage >= 80) {
         if (instances.length < process.env.INSTANCES_MAX) {
             console.log('🔴 CPU total acima de 80% - Criando 1');
