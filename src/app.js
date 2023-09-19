@@ -4,7 +4,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const fs = require('fs');
 const os = require('os');
 const express = require('express');
-const { expressCspHeader, INLINE, NONE, BLOB, SELF } = require('express-csp-header');
+const { expressCspHeader, INLINE, EVAL, NONE, BLOB, SELF } = require('express-csp-header');
 //const helmet = require('helmet');
 const cors = require('cors');
 const app = express();
@@ -23,7 +23,7 @@ app.use(
     expressCspHeader({
         directives: {
             'default-src': [SELF, `https://${process.env.BASEURL}`],
-            'script-src': [SELF, INLINE, BLOB, `https://${process.env.BASEURL}`],
+            'script-src': [SELF, INLINE, EVAL, BLOB, `https://${process.env.BASEURL}`],
             'style-src': [SELF, INLINE, `https://${process.env.BASEURL}`],
             'img-src': ['data:', `https://${process.env.BASEURL}`],
             'worker-src': [NONE, `https://${process.env.BASEURL}`],
