@@ -41,7 +41,7 @@ write_files:
     upstream php-fpm { server unix:/run/php-fpm/www.sock; }
     server {
       listen 80;
-      server_name  cloudfront.flipay.com.br;
+      server_name  ${process.env.BASEURL};
       root         /usr/share/nginx/html;
       index index.php index.html;
       location ~ \.php$ {
@@ -60,11 +60,11 @@ write_files:
     }
     server {
       listen 443 ssl http2;
-      server_name cloudfront.flipay.com.br;
+      server_name ${process.env.BASEURL};
       root /usr/share/nginx/html;
       index index.php index.html;
-      ssl_certificate /etc/letsencrypt/live/cloudfront.flipay.com.br/fullchain.pem;
-      ssl_certificate_key /etc/letsencrypt/live/cloudfront.flipay.com.br/privkey.pem;
+      ssl_certificate /etc/letsencrypt/live/${process.env.BASEURL}/fullchain.pem;
+      ssl_certificate_key /etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem;
       ssl_protocols TLSv1.2 TLSv1.3;
       ssl_ciphers 'TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384';
       location ~ \.php$ {
@@ -135,37 +135,11 @@ exports.Create = async (req, res, next) => {
             enable_vpc: true,
         };
 
-        console.log('-[ criando ]-------------------');
-        console.log(params);
-        console.log('-------------------------------');
+        console.log('🟣 Criando nova instancia');
 
         let ret = await api.Post('/instances', params);
 
-        console.log('--------------------');
-        console.log(ret.data);
-        console.log('--------------------');
         return res.status(200).json(ret.data);
-
-        /*
-    let os = await api.Get('/os', params, {
-        headers: {
-            Authorization: `Bearer ${process.env.VULTR_API_KEY}`,
-        },
-    });
-    console.log(os.data);
-*/
-        /*
-    try {
-        api.post('https://api.vultr.com/v2/instances', params, {
-            headers: {
-                Authorization: `Bearer ${process.env.VULTR_API_KEY}`,
-            },
-        });
-    } catch (error) {
-        // Lide com erros aqui
-        return res.status(500).json({ error: 'Erro ao criar a instância' });
-    }
-    */
     } catch (error) {
         console.log('🔴 Erro criando instancia', error);
         return res.status(500).json({ error: 'Erro ao criar a instância' });
