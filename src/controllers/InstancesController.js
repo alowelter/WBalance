@@ -1,7 +1,9 @@
 const api = require('./ApiController');
 require('dotenv').config();
 
-const instanceScript = `#cloud-config
+const instanceScript = `
+#cloud-config
+
 packages:
   - nginx
   - php-fpm
@@ -24,64 +26,64 @@ write_files:
   path: /etc/selinux/config
 
 - content: |
-  user nginx;
-  worker_processes auto;
-  pid /run/nginx.pid;
-  events { worker_connections 1024; }
-  http {
-    access_log off;
-    error_log /dev/null crit;
-    sendfile            on;
-    tcp_nopush          on;
-    tcp_nodelay         on;
-    keepalive_timeout   65;
-    types_hash_max_size 4096;
-    include             /etc/nginx/mime.types;
-    default_type        application/octet-stream;
-    upstream php-fpm { server unix:/run/php-fpm/www.sock; }
-    server {
-      listen 80;
-      server_name  ${process.env.BASEURL};
-      root         /usr/share/nginx/html;
-      index index.php index.html;
-      location ~ \.php$ {
-        include fastcgi_params;
-        fastcgi_pass unix:/run/php-fpm/www.sock;
-        fastcgi_split_path_info ^(.+\.php)(/.+)$;
-        fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        try_files $uri $uri/ /index.php?$args;
+    user nginx;
+    worker_processes auto;
+    pid /run/nginx.pid;
+    events { worker_connections 1024; }
+    http {
+      access_log off;
+      error_log /dev/null crit;
+      sendfile            on;
+      tcp_nopush          on;
+      tcp_nodelay         on;
+      keepalive_timeout   65;
+      types_hash_max_size 4096;
+      include             /etc/nginx/mime.types;
+      default_type        application/octet-stream;
+      upstream php-fpm { server unix:/run/php-fpm/www.sock; }
+      server {
+        listen 80;
+        server_name  ${process.env.BASEURL};
+        root         /usr/share/nginx/html;
+        index index.php index.html;
+        location ~ \.php$ {
+          include fastcgi_params;
+          fastcgi_pass unix:/run/php-fpm/www.sock;
+          fastcgi_split_path_info ^(.+\.php)(/.+)$;
+          fastcgi_index index.php;
+          fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+          try_files $uri $uri/ /index.php?$args;
+        }
+        location ~ \.(css|js|jpg|jpeg|png|gif)$ {
+          expires 30d;
+          add_header Cache-Control "public, max-age=2592000";
+          try_files $uri =404;
+        }
       }
-      location ~ \.(css|js|jpg|jpeg|png|gif)$ {
-        expires 30d;
-        add_header Cache-Control "public, max-age=2592000";
-        try_files $uri =404;
+      server {
+        listen 443 ssl http2;
+        server_name ${process.env.BASEURL};
+        root /usr/share/nginx/html;
+        index index.php index.html;
+        ssl_certificate /etc/letsencrypt/live/${process.env.BASEURL}/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem;
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_ciphers 'TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384';
+        location ~ \.php$ {
+          include fastcgi_params;
+          fastcgi_pass unix:/run/php-fpm/www.sock;
+          fastcgi_split_path_info ^(.+\.php)(/.+)$;
+          fastcgi_index index.php;
+          fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+          try_files $uri $uri/ /index.php?$args;
+        }
+        location ~ \.(css|js|jpg|jpeg|png|gif)$ {
+          expires 30d;
+          add_header Cache-Control "public, max-age=2592000";
+          try_files $uri =404;
+        }
       }
     }
-    server {
-      listen 443 ssl http2;
-      server_name ${process.env.BASEURL};
-      root /usr/share/nginx/html;
-      index index.php index.html;
-      ssl_certificate /etc/letsencrypt/live/${process.env.BASEURL}/fullchain.pem;
-      ssl_certificate_key /etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem;
-      ssl_protocols TLSv1.2 TLSv1.3;
-      ssl_ciphers 'TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384';
-      location ~ \.php$ {
-        include fastcgi_params;
-        fastcgi_pass unix:/run/php-fpm/www.sock;
-        fastcgi_split_path_info ^(.+\.php)(/.+)$;
-        fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        try_files $uri $uri/ /index.php?$args;
-      }
-      location ~ \.(css|js|jpg|jpeg|png|gif)$ {
-        expires 30d;
-        add_header Cache-Control "public, max-age=2592000";
-        try_files $uri =404;
-      }
-    }
-  }
   path: /etc/nginx/nginx.conf
 
 - content: |
@@ -116,6 +118,7 @@ runcmd:
   - systemctl enable nginx
   - systemctl enable php-fpm
   - reboot
+
 `;
 
 exports.Create = async (req, res, next) => {
