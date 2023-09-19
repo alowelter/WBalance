@@ -133,7 +133,7 @@ app.get('/cpu', async (req, res) => {
     };
 
     try {
-        const { stdout } = await exec("vmstat 1 2 | tail -nco 1 | awk '{print 100 - $15}'");
+        const { stdout } = await exec("vmstat 1 1 | tail -n 1 | awk '{print 100 - $15}'");
         result.loadbalance.cpu = stdout;
 
         instances.forEach((instance) => {
