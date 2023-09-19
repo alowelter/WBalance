@@ -127,7 +127,7 @@ function getServer() {
         }
         return instances[currIndex];
     } catch (error) {
-        console.log('🔴 Erro ao obtendo instancia.', error);
+        console.log('🔴 Erro ao obtendo instancia.', error, instances);
         return null;
     }
 }
