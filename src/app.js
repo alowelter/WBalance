@@ -213,6 +213,8 @@ async function serverImprove() {
                             if (cpuUsage > 100) cpuUsage = 100;
                             if (cpuUsage < 1) puUsage = 1;
                             _instance.cpu = cpuUsage;
+                            let i = instances.findIndex((instance) => instance.id === _instance.id);
+                            i.cpu = cpuUsage;
                             //if (process.env.LOG_MODE.toUpperCase() == 'DEBUG')
                             console.log(`🔹 ${_instance.internal_ip} > CPU Usage: ${cpuUsage}%`);
                         } else {
