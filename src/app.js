@@ -118,6 +118,10 @@ let currIndex = 0;
 // Get next server
 function getServer() {
     try {
+        if (!instances || instances.length < 1) {
+            return null;
+        }
+
         // Round robin
         currIndex = (currIndex + 1) % instances.length;
 
