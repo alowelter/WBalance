@@ -4,7 +4,8 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const fs = require('fs');
 const os = require('os');
 const express = require('express');
-const helmet = require('helmet');
+const { expressCspHeader, INLINE, NONE, SELF } = require('express-csp-header');
+//const helmet = require('helmet');
 const cors = require('cors');
 const app = express();
 
@@ -18,6 +19,20 @@ process.env.TZ = 'America/Sao_Paulo';
 app.use(cors());
 
 // CSP
+app.use(
+    expressCspHeader({
+        directives: {
+            'default-src': [SELF],
+            'script-src': [SELF, INLINE],
+            'style-src': [SELF, INLINE],
+            'img-src': ['data:', `https://${process.env.BASEURL}`],
+            'worker-src': [NONE],
+            'block-all-mixed-content': true,
+        },
+    })
+);
+
+/*
 app.use(
     helmet.contentSecurityPolicy({
         directives: {
@@ -33,26 +48,6 @@ app.use(
         },
     })
 );
-/*
-app.use(
-    helmet.contentSecurityPolicy({
-        directives: {
-            // Diretivas base
-            defaultSrc: ["'self'"],
-            // Permitir 'unsafe-inline' e 'unsafe-eval' apenas onde necessário
-            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", `https://${process.env.BASEURL}`, 'blob:'],
-            workerSrc: ["'self'", 'blob:'], // Adicionado workerSrc
-            // Diretiva para carregar frames apenas do mesmo domínio
-            frameSrc: ["'self'", `https://${process.env.BASEURL}`, 'blob:'],
-            // Permitir imagens de qualquer fonte, incluindo 'data:' e 'https://s.w.org'
-            imgSrc: ["'self'", 'data:', 'blob:', 'https://*.gravatar.com', 'https://s.w.org'],
-            // Outras diretivas CSP aqui
-            connectSrc: ["'self'", 'http://${process.env.BASEURL}', `https://${process.env.BASEURL}`],
-            formAction: ["'self'", `https://${process.env.BASEURL}`, "'*'"],
-        },
-    })
-);
-
 */
 
 const deploy = require('./controllers/deployController');
@@ -200,7 +195,6 @@ async function serverImprove() {
                 _instance.proxy = createProxyMiddleware({
                     target: proxyurl,
                     logLevel: 'warn',
-                    followRedirects: true,
                     //onProxyRes: (proxyRes, req, res) => {
                     //    if (proxyRes.headers['content-security-policy']) {
                     //        const currentCSP = proxyRes.headers['content-security-policy'];
