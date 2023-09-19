@@ -187,10 +187,15 @@ app.use(async (req, res, next) => {
 
 async function serverImprove() {
     const instancesResponse = await api.instances();
-    instances = instancesResponse.data.instances;
-    console.log('🟣 Refresh Instances', instances.length, instances);
+    local_instances = instancesResponse.data.instances;
+    console.log('🟣 Refresh Instances', local_instances.length, instances);
 
-    const promises = instances.map(async (instance) => {
+    const promises = local_instances.map(async (_instance) => {
+        let instance = instances.find((instance) => instance.id === _instance.id) || null;
+        if (!instance) {
+            instance = _instance;
+            instances.push(instance);
+        }
         try {
             if (instance.status === 'active') {
                 try {
