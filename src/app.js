@@ -194,6 +194,7 @@ async function serverImprove() {
                     let found = instances.find((instance) => instance.id === _instance.id) || null;
                     if (!found) {
                         _instance.cpu = await api.Cpu(_instance);
+                        console.log('***', _instance.cpu);
                         if (_instance.cpu >= 0) {
                             _instance.proxy = createProxyMiddleware({
                                 target: `https://${_instance.internal_ip}/`,
