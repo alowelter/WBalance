@@ -250,9 +250,6 @@ async function serverImprove() {
         cpuUsageAverage = cpuUsageSum / instances.length;
     }
     instances = instances.filter((instance) => instance.status != 'deleted');
-    if (instances.length === 1) {
-        const cpuUsageAverage = instances[0].cpu;
-    }
     if (instances.length < 1) {
         console.log('🔴 Nenhuma instancia encontrada - Criando 1');
         InstancesController.Create(req, res, next);
