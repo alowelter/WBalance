@@ -69,7 +69,7 @@ const api = require('./controllers/ApiController');
 
 // handles
 
-let instances = null;
+let instances = [];
 let loadbalance = null;
 if (os.platform() != 'linux') {
     console.log('🔴 Sistema deve ser linux');
@@ -190,7 +190,7 @@ async function serverImprove() {
     local_instances = instancesResponse.data.instances;
     const promises = local_instances.map(async (_instance) => {
         let i = null;
-        if (instances) {
+        if (instances && instances.length > 0) {
             i = instances.find((instance) => instance.id === _instance.id);
         }
         if (!i) {
