@@ -134,7 +134,7 @@ app.get('/cpu', async (req, res) => {
 
     try {
         const { stdout } = await exec("vmstat 1 2 | tail -nco 1 | awk '{print 100 - $15}'");
-        result.loadbalance.cpu = stdout.trim();
+        result.loadbalance.cpu = stdout;
 
         instances.forEach((instance) => {
             result.backend.webserver.push({ ip: instance.internal_ip, cpu: instance.cpu });
