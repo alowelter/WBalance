@@ -22,7 +22,7 @@ app.use(
     helmet.contentSecurityPolicy({
         directives: {
             //defaultSrc: ["'self'"],
-            defaultSrc: ["'self'", `https://${process.env.BASEURL}/*`],
+            defaultSrc: ["'self'", `https://${process.env.BASEURL}`],
             scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'blob:', `https://${process.env.BASEURL}`],
             workerSrc: ["'self'", 'blob:'],
             frameSrc: ["'self'", 'blob:', `https://${process.env.BASEURL}`],
