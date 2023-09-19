@@ -237,18 +237,16 @@ async function serverImprove() {
     await Promise.all(promises);
 
     let cpuUsageAverage = 0;
-    if (instances.length > 1) {
-        let cpuUsageSum = 0;
-        instances.forEach((instance) => {
-            const _instance = local_instances.find((_instance) => _instance.id === instance.id) || null;
-            if (!_instance) {
-                instance.status = 'deleted';
-            } else {
-                cpuUsageSum += instance.cpu;
-            }
-        });
-        cpuUsageAverage = cpuUsageSum / instances.length;
-    }
+    let cpuUsageSum = 0;
+    instances.forEach((instance) => {
+        const _instance = local_instances.find((_instance) => _instance.id === instance.id) || null;
+        if (!_instance) {
+            instance.status = 'deleted';
+        } else {
+            cpuUsageSum += instance.cpu;
+        }
+    });
+    cpuUsageAverage = cpuUsageSum / instances.length;
     instances = instances.filter((instance) => instance.status != 'deleted');
     if (instances.length < 1) {
         console.log('🔴 Nenhuma instancia encontrada - Criando 1');
