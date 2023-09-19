@@ -169,13 +169,9 @@ async function serverImprove() {
                 _instance.proxy = createProxyMiddleware({
                     target: proxyurl,
                     logLevel: 'debug',
-                    //onProxyRes: (proxyRes, req, res) => {
-                    //    if (proxyRes.headers['content-security-policy']) {
-                    //        const currentCSP = proxyRes.headers['content-security-policy'];
-                    //        const newCSP = `${currentCSP} script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'`;
-                    //        proxyRes.headers['content-security-policy'] = newCSP;
-                    //    }
-                    //}
+                    onProxyRes: (proxyRes, req, res) => {
+                        proxyRes.headers['Server'] = 'WBalance by Welm 09/2023 ';
+                    },
                 });
                 _instance.cpu = 0;
                 instances.push(_instance);
