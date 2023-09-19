@@ -24,7 +24,8 @@ app.use(
     helmet.contentSecurityPolicy({
         directives: {
             defaultSrc: ["'self'", URL],
-            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'blob:', URL],
+            //scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'blob:', URL],
+            scriptSrc: ["'self'", URL],
             workerSrc: ["'self'", 'blob:'],
             frameSrc: ["'self'", 'blob:', URL],
             imgSrc: ["'self'", 'data:', 'blob:', 'https://*.gravatar.com'],
