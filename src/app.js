@@ -114,7 +114,7 @@ main();
 
 setInterval(async () => {
     await serverImprove();
-}, 60 * 1000); // 1 minuto
+}, 30 * 1000); // 1 minuto
 
 app.get('/ping', (req, res) => {
     console.log(`🔹 ping`);
