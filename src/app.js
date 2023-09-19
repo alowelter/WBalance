@@ -203,6 +203,7 @@ async function serverImprove() {
                                     proxyRes.headers['Server'] = 'WBalance by Welm 09/2023 ';
                                 },
                             });
+                            instances.push(_instance);
                         }
                     }
                 }
