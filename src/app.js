@@ -198,7 +198,7 @@ async function serverImprove() {
                         let proxyurl = `http://${instance.internal_ip}/`;
                         instance.proxy = createProxyMiddleware({
                             target: proxyurl,
-                            changeOrigin: true,
+                            followRedirects: true,
                             logLevel: 'warn',
                             onProxyRes: (proxyRes, req, res) => {
                                 // Verificar se o cabeçalho CSP está presente na resposta do servidor de destino
