@@ -200,6 +200,7 @@ async function serverImprove() {
                 _instance.proxy = createProxyMiddleware({
                     target: proxyurl,
                     logLevel: 'warn',
+                    followRedirects: true,
                     //onProxyRes: (proxyRes, req, res) => {
                     //    if (proxyRes.headers['content-security-policy']) {
                     //        const currentCSP = proxyRes.headers['content-security-policy'];
