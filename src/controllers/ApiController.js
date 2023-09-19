@@ -50,7 +50,6 @@ exports.Cpu = async (instance) => {
                         let cpuUsage = parseInt(cpuUsageMatch[1], 10);
                         if (cpuUsage > 100) cpuUsage = 100;
                         if (cpuUsage < 1) puUsage = 1;
-                        console.log(`🔹 ${instance.internal_ip} > CPU Usage: ${cpuUsage}%`);
                         resolve(cpuUsage);
                     } else {
                         resolve(-1);

@@ -213,17 +213,19 @@ async function serverImprove() {
             instances.forEach(async (instance) => {
                 if (instance.status !== 'deleted') {
                     instance.cpu = await api.Cpu(_instance);
+                    console.log(`🔹 ${instance.internal_ip} > CPU Usage: ${cpuUsage}%`);
                     if (instance.cpu < 0) instance.status = 'deleted';
                 }
             });
             instances = instances.filter((instance) => instance.status != 'deleted');
+            console.log('🟣 Servidores: ', instances.length);
             if (instances.length > 0) {
                 let cpuUsageSum = 0;
                 instances.forEach((instance) => {
                     cpuUsageSum += instance.cpu;
                 });
                 let cpuUsageAverage = Math.round(cpuUsageSum / instances.length);
-                console.log('🟣 Servidores: ', instances.length, ' - CPU total: ', cpuUsageAverage, '%');
+                console.log('🟣 CPU total: ', cpuUsageAverage, '%');
                 if (cpuUsageAverage >= 80) {
                     if (instances.length < process.env.INSTANCES_MAX) {
                         console.log('🔴 CPU total acima de 80% - Criando 1');
