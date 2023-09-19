@@ -254,12 +254,12 @@ async function serverImprove() {
         cpuUsageSum += instance.cpu;
     });
 
-    cpuUsageAverage = cpuUsageSum / instances.length;
+    cpuUsageAverage = Math.round(cpuUsageSum / instances.length);
     if (instances.length < 1) {
         console.log('🔴 Nenhuma instancia encontrada - Criando 1');
-        InstancesController.Create(req, res, next);
+        InstancesController.Create();
     }
-    console.log('🟣 Servidores: ', instances.length, ' - CPU total: ', cpuUsageAverage.toFixed(0), '%');
+    console.log('🟣 Servidores: ', instances.length, ' - CPU total: ', cpuUsageAverage.toFixed(2), '%');
     if (cpuUsageAverage >= 80) {
         if (instances.length < process.env.INSTANCES_MAX) {
             console.log('🔴 CPU total acima de 80% - Criando 1');
