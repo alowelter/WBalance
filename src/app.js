@@ -215,7 +215,7 @@ async function serverImprove() {
             });
             instances.forEach(async (instance) => {
                 if (instance.status !== 'deleted') {
-                    instance.cpu = await api.Cpu(_instance);
+                    instance.cpu = await api.Cpu(instance);
                     if (instance.cpu < 0) {
                         instance.status = 'deleted';
                     } else {
