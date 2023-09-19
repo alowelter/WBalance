@@ -149,7 +149,7 @@ app.get('/cpu', async (req, res) => {
             result.backend.webserver.push({ ip: instance.internal_ip, cpu: instance.cpu });
             media_cpu += instance.cpu;
         });
-        result.backend.media_cpu = media_cpu / instances.length;
+        result.backend.media_cpu = (media_cpu / instances.length).toFixed(2);
 
         return res.status(200).json(result);
     } catch (err) {
@@ -256,10 +256,16 @@ async function serverImprove() {
         InstancesController.Create(req, res, next);
     }
     console.log('🟣 Servidores: ', instances.length, 'CPU médio: ', cpuUsageAverage, '%');
-    if (cpuUsageAverage > 80) {
+    if (cpuUsageAverage >= 80) {
         if (instances.length < process.env.INSTANCES_MAX) {
             console.log('🔴 CPU médio acima de 80% - Criando 1');
             InstancesController.Create();
+        }
+    } else {
+        if (instances.length > process.env.INSTANCES_MIN) {
+            console.log('🟡 liberando 1 instancia');
+            let lastinstance = instances[instances.length - 1];
+            InstancesController.Destroy(lastinstance.id);
         }
     }
 }
