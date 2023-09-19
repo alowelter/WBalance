@@ -4,7 +4,6 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const fs = require('fs');
 const os = require('os');
 const express = require('express');
-const helmet = require('helmet');
 const cors = require('cors');
 const app = express();
 
@@ -16,26 +15,6 @@ process.env.TZ = 'America/Sao_Paulo';
 
 // Cors
 app.use(cors());
-
-const URL = `https://${process.env.BASEURL}`;
-
-// CSP
-/*
-app.use(
-    helmet.contentSecurityPolicy({
-        directives: {
-            defaultSrc: ["'self'", URL],
-            //scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'blob:', URL],
-            scriptSrc: ["'self'", "'unsafe-inline'", URL],
-            workerSrc: ["'self'", 'blob:'],
-            frameSrc: ["'self'", 'blob:', URL],
-            imgSrc: ["'self'", 'data:', 'blob:', 'https://*.gravatar.com'],
-            connectSrc: ["'self'", URL],
-            formAction: ["'self'", 'https:', URL],
-        },
-    })
-);
-*/
 
 const deploy = require('./controllers/deployController');
 const InstancesController = require('./controllers/InstancesController');
@@ -51,7 +30,6 @@ const api = require('./controllers/ApiController');
 //console.log('🟢 Mysql - PlanetScale');
 
 // handles
-
 let instances = [];
 let loadbalance = null;
 if (os.platform() != 'linux') {
@@ -96,7 +74,7 @@ const proxyOptions = {
         // Add custom header to request
         proxyReq.setHeader('X-Special-Proxy-Header', 'WBalance');
     },
-    logLevel: 'debug',
+    logLevel: 'warn',
 };
 
 // Next server index
@@ -187,7 +165,7 @@ async function serverImprove() {
         }
         if (!i) {
             if (_instance.status === 'active') {
-                let proxyurl = `https://${_instance.internal_ip}/`;
+                let proxyurl = `http://${_instance.internal_ip}/`;
                 _instance.proxy = createProxyMiddleware({
                     target: proxyurl,
                     logLevel: 'debug',

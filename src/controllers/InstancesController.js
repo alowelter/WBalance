@@ -24,43 +24,64 @@ write_files:
   path: /etc/selinux/config
 
 - content: |
-    user nginx;
-    worker_processes auto;
-    error_log /var/log/nginx/error.log;
-    pid /run/nginx.pid;
-    include /usr/share/nginx/modules/*.conf;
-    events {
-       worker_connections 1024;
-    }
-    http {
-      log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-                        '$status $body_bytes_sent "$http_referer" '
-                        '"$http_user_agent" "$http_x_forwarded_for"';
-      access_log  /var/log/nginx/access.log  main;
-      sendfile            on;
-      tcp_nopush          on;
-      tcp_nodelay         on;
-      keepalive_timeout   65;
-      types_hash_max_size 4096;
-      include             /etc/nginx/mime.types;
-      default_type        application/octet-stream;
-      include /etc/nginx/conf.d/*.conf;
-      server {
-              listen       80;
-              listen       [::]:80;
-              server_name  ${process.env.BASEURL};
-              root         /usr/share/nginx/html;
-              index index.php index.html;
-              try_files $uri $uri/ /index.php?$args;
-              location ~ \.php$ {
-                include fastcgi_params;
-                fastcgi_pass unix:/run/php-fpm/www.sock;
-                fastcgi_split_path_info ^(.+\.php)(/.+)$;
-                fastcgi_index index.php;
-                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-              }
+  user nginx;
+  worker_processes auto;
+  pid /run/nginx.pid;
+  events { worker_connections 1024; }
+  http {
+    access_log off;
+    error_log /dev/null crit;
+    sendfile            on;
+    tcp_nopush          on;
+    tcp_nodelay         on;
+    keepalive_timeout   65;
+    types_hash_max_size 4096;
+    include             /etc/nginx/mime.types;
+    default_type        application/octet-stream;
+    upstream php-fpm { server unix:/run/php-fpm/www.sock; }
+    server {
+      listen 80;
+      server_name  cloudfront.flipay.com.br;
+      root         /usr/share/nginx/html;
+      index index.php index.html;
+      location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_pass unix:/run/php-fpm/www.sock;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        try_files $uri $uri/ /index.php?$args;
+      }
+      location ~ \.(css|js|jpg|jpeg|png|gif)$ {
+        expires 30d;
+        add_header Cache-Control "public, max-age=2592000";
+        try_files $uri =404;
       }
     }
+    server {
+      listen 443 ssl http2;
+      server_name cloudfront.flipay.com.br;
+      root /usr/share/nginx/html;
+      index index.php index.html;
+      ssl_certificate /etc/letsencrypt/live/cloudfront.flipay.com.br/fullchain.pem;
+      ssl_certificate_key /etc/letsencrypt/live/cloudfront.flipay.com.br/privkey.pem;
+      ssl_protocols TLSv1.2 TLSv1.3;
+      ssl_ciphers 'TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384';
+      location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_pass unix:/run/php-fpm/www.sock;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        try_files $uri $uri/ /index.php?$args;
+      }
+      location ~ \.(css|js|jpg|jpeg|png|gif)$ {
+        expires 30d;
+        add_header Cache-Control "public, max-age=2592000";
+        try_files $uri =404;
+      }
+    }
+  }
   path: /etc/nginx/nginx.conf
 
 - content: |
@@ -75,9 +96,8 @@ write_files:
     pm.start_servers = 5
     pm.min_spare_servers = 5
     pm.max_spare_servers = 35
-    slowlog = /var/log/php-fpm/www-slow.log
-    php_admin_value[error_log] = /var/log/php-fpm/www-error.log
-    php_admin_flag[log_errors] = on
+    php_admin_value[error_log] = /dev/null
+    php_admin_flag[log_errors] = off
     php_value[session.save_handler] = files
     php_value[session.save_path]    = /var/lib/php/session
     php_value[soap.wsdl_cache_dir]  = /var/lib/php/wsdlcache
@@ -96,7 +116,6 @@ runcmd:
   - systemctl enable nginx
   - systemctl enable php-fpm
   - reboot
-
 `;
 
 exports.Create = async (req, res, next) => {
