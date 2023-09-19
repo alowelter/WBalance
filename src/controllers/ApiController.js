@@ -40,9 +40,9 @@ exports.loadbalance = async (req, res) => {
 };
 
 exports.Cpu = async (instance) => {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
         try {
-            let response = axios.get(`http://${instance.internal_ip}/cpu.php`);
+            let response = await axios.get(`http://${instance.internal_ip}/cpu.php`);
             if (response.status == 200) {
                 const cpuUsageMatch = response.data.match(/CPU:(\d+)%/);
                 if (cpuUsageMatch && cpuUsageMatch[1]) {
