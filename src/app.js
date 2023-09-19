@@ -25,11 +25,11 @@ app.use(
         directives: {
             defaultSrc: ["'self'", URL],
             //scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'blob:', URL],
-            scriptSrc: ["'self'", URL],
+            scriptSrc: ["'self'", "'unsafe-inline'", URL],
             workerSrc: ["'self'", 'blob:'],
             frameSrc: ["'self'", 'blob:', URL],
             imgSrc: ["'self'", 'data:', 'blob:', 'https://*.gravatar.com'],
-            connectSrc: ["'self'", URL, `wss://${process.env.BASEURL}`],
+            connectSrc: ["'self'", URL],
             formAction: ["'self'", 'https:', URL],
         },
     })
