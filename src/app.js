@@ -141,7 +141,7 @@ app.use(async (req, res, next) => {
         return res.status(500).json({ error: 'Nenhuma instancia encontrada' });
     }
 
-    console.log(`🔸 {${req.method}} > ${req.path} 🔜 ${target.internal_ip}`);
+    if (process.env.LOG_MODE.toUpperCase() == 'DEBUG') console.log(`🔸 {${req.method}} > ${req.path} 🔜 ${target.internal_ip}`);
     target.proxy(req, res, next);
 });
 
