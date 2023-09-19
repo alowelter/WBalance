@@ -210,7 +210,8 @@ async function serverImprove() {
                         const cpuUsageMatch = response.data.match(/CPU:(\d+)%/);
                         if (cpuUsageMatch && cpuUsageMatch[1]) {
                             const cpuUsage = parseInt(cpuUsageMatch[1], 10);
-                            _instance.cpu = cpuUsage > 1 ? cpuUsage : 1;
+                            let _cpu = cpuUsage > 1 ? cpuUsage : 1;
+                            _instance.cpu = _cpu > 100 ? 100 : _cpu;
                             //if (process.env.LOG_MODE.toUpperCase() == 'DEBUG')
                             console.log(`🔹 ${_instance.internal_ip} > CPU Usage: ${cpuUsage}%`);
                         } else {
