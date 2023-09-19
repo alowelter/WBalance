@@ -120,6 +120,22 @@ app.get('/ping', (req, res) => {
     console.log(`🔹 ping`);
     return res.send('pong');
 });
+app.get('/cpu', async (req, res) => {
+    const os = require('os');
+    if (os.type() === 'Windows_NT') {
+        return res.send('Windows');
+    }
+
+    const { exec } = require('child_process');
+    let result = {};
+
+    // get #cpu usage
+    exec("vmstat 1 2 | tail -nco 1 | awk '{print 100 - $15}'", (err, stdout, stderr) => {
+        if (err) return res.send(err);
+        result.cpu = stdout;
+    });
+    return res.status(200).json(result);
+}
 
 // Auto-deploy
 app.get('/deploy', async (req, res, next) => {
