@@ -31,7 +31,7 @@ app.use(
             'form-action': [SELF, `https://${process.env.BASEURL}`],
 
             //'style-src': [SELF, INLINE, `https://${process.env.BASEURL}`],
-            'block-all-mixed-content': true,
+            'block-all-mixed-content': false,
         },
     })
 );
