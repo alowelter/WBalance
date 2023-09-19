@@ -216,7 +216,7 @@ async function serverImprove() {
     });
 
     instances.forEach((instance) => {
-        axios.get(`http://${_instance.internal_ip}/cpu.php`).then((response) => {
+        axios.get(`http://${instance.internal_ip}/cpu.php`).then((response) => {
             if (response.status == 200) {
                 const cpuUsageMatch = response.data.match(/CPU:(\d+)%/);
                 if (cpuUsageMatch && cpuUsageMatch[1]) {
@@ -224,17 +224,15 @@ async function serverImprove() {
                     if (cpuUsage > 100) cpuUsage = 100;
                     if (cpuUsage < 1) puUsage = 1;
                     instance.cpu = cpuUsage;
-                    console.log(`🔹 ${_instance.internal_ip} > CPU Usage: ${cpuUsage}%`);
+                    console.log(`🔹 ${instance.internal_ip} > CPU Usage: ${cpuUsage}%`);
                 } else {
-                    console.log(`🔹 ${_instance.internal_ip} > CPU Usage not found in response`);
-                    _instance.status = 'deleted';
+                    console.log(`🔹 ${instance.internal_ip} > CPU Usage not found in response`);
+                    instance.status = 'deleted';
                 }
             }
         });
     });
     instances = instances.filter((instance) => instance.status != 'deleted');
-
-    // sumn all cpu from instances em divide by intances.length
 
     let cpuUsageSum = 0;
     instances.forEach((instance) => {
