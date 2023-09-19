@@ -187,7 +187,7 @@ async function serverImprove() {
                 let proxyurl = `https://${_instance.internal_ip}/`;
                 _instance.proxy = createProxyMiddleware({
                     target: proxyurl,
-                    logLevel: 'warn',
+                    logLevel: 'debug',
                     //onProxyRes: (proxyRes, req, res) => {
                     //    if (proxyRes.headers['content-security-policy']) {
                     //        const currentCSP = proxyRes.headers['content-security-policy'];
