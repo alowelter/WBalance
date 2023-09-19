@@ -138,14 +138,18 @@ app.get('/cpu', async (req, res) => {
         loadbalance: {},
         backend: {
             webserver: [],
+            media_cpu: 0,
         },
     };
 
     try {
         result.loadbalance.cpu = await getCpuUsage();
+        let media_cpu = 0;
         instances.forEach((instance) => {
             result.backend.webserver.push({ ip: instance.internal_ip, cpu: instance.cpu });
+            media_cpu += instance.cpu;
         });
+        result.backend.media_cpu = media_cpu / instances.length;
 
         return res.status(200).json(result);
     } catch (err) {
