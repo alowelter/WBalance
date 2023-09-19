@@ -127,7 +127,7 @@ const osutils = require('os-utils');
 function getCpuUsage() {
     return new Promise((resolve, reject) => {
         osutils.cpuUsage((value) => {
-            resolve(value);
+            resolve(value.toFixed(2) * 100);
         });
     });
 }
