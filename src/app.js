@@ -28,7 +28,8 @@ app.use(
             frameSrc: ["'self'", 'blob:', `https://${process.env.BASEURL}`],
             imgSrc: ["'self'", 'data:', 'blob:', 'https://*.gravatar.com'],
             connectSrc: ["'self'", `https://${process.env.BASEURL}`, `wss://${process.env.BASEURL}`],
-            formAction: ["'self'", 'https:', `https://${process.env.BASEURL}`],
+            //formAction: ["'self'", 'https:', `https://${process.env.BASEURL}`],
+            formAction: ["'self'", 'https:', 'https://cloudfront.flipay.com.br'],
         },
     })
 );
