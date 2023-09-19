@@ -20,6 +20,7 @@ app.use(cors());
 const URL = `https://${process.env.BASEURL}`;
 
 // CSP
+/*
 app.use(
     helmet.contentSecurityPolicy({
         directives: {
@@ -34,6 +35,7 @@ app.use(
         },
     })
 );
+*/
 
 const deploy = require('./controllers/deployController');
 const InstancesController = require('./controllers/InstancesController');
