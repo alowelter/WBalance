@@ -129,9 +129,7 @@ app.post('/deploy', async (req, res, next) => {
     deploy.run(req, res, next);
 });
 app.get('/add-instance', async (req, res, next) => {
-    await InstancesController.Create(req, res, next);
-    const instancesResponse = await api.instances();
-    instances = instancesResponse.data.instances;
+    return await InstancesController.Create(req, res, next);
 });
 
 app.use(async (req, res, next) => {
@@ -142,7 +140,7 @@ app.use(async (req, res, next) => {
     }
 
     if (process.env.LOG_MODE.toUpperCase() == 'DEBUG') console.log(`🔸 {${req.method}} > ${req.path} 🔜 ${target.internal_ip}`);
-    target.proxy(req, res, next);
+    if (target) target.proxy(req, res, next);
 });
 
 async function serverImprove() {
@@ -179,12 +177,15 @@ async function serverImprove() {
                             console.log(`🔹 ${_instance.internal_ip} > CPU Usage: ${cpuUsage}%`);
                         } else {
                             console.log(`🔹 ${_instance.internal_ip} > CPU Usage not found in response`);
+                            _instance.status = 'deleted';
                         }
                     } else {
                         console.log(`🔹 ${_instance.internal_ip} > CPU Usage request failed`);
+                        _instance.status = 'deleted';
                     }
                 } catch (error) {
                     console.error(`🔹 ${_instance.internal_ip} > Error: ${error.message}`);
+                    _instance.status = 'deleted';
                 }
             } else {
                 _instance.cpu = 0;
