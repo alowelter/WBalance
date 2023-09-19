@@ -184,7 +184,7 @@ async function serverImprove() {
         try {
             if (_instance.status === 'active') {
                 try {
-                    const response = await axios.get(`http://${_instance.internal_ip}/cpu.php`);
+                    const response = await axios.get(`https://${_instance.internal_ip}/cpu.php`);
                     if (response.status === 200) {
                         const cpuUsageMatch = response.data.match(/CPU:(\d+)%/);
                         if (cpuUsageMatch && cpuUsageMatch[1]) {
