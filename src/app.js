@@ -4,8 +4,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const fs = require('fs');
 const os = require('os');
 const express = require('express');
-const { expressCspHeader, INLINE, DATA, EVAL, NONE, BLOB, SELF } = require('express-csp-header');
-//const helmet = require('helmet');
+const helmet = require('helmet');
 const cors = require('cors');
 const app = express();
 
@@ -22,25 +21,6 @@ const URL = `https://${process.env.BASEURL}`;
 
 // CSP
 app.use(
-    expressCspHeader({
-        directives: {
-            'default-src': [SELF, INLINE, URL],
-            'script-src': [SELF, INLINE, EVAL, `http://${process.env.BASEURL}`, URL],
-            'worker-src': [SELF, BLOB],
-            'frame-src': [SELF, BLOB, URL],
-            //'img-src': [SELF, DATA, BLOB],
-            'img-src': ["'self'", 'data:', 'blob:', 'https://*.gravatar.com'],
-            'connect-src': [SELF, URL, `wss://${process.env.BASEURL}`],
-            'form-action': [SELF, URL],
-
-            //'style-src': [SELF, INLINE, `https://${process.env.BASEURL}`],
-            'block-all-mixed-content': false,
-        },
-    })
-);
-
-/*
-app.use(
     helmet.contentSecurityPolicy({
         directives: {
             defaultSrc: ["'self'", `https://${process.env.BASEURL}`],
@@ -53,7 +33,6 @@ app.use(
         },
     })
 );
-*/
 
 const deploy = require('./controllers/deployController');
 const InstancesController = require('./controllers/InstancesController');
