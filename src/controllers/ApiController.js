@@ -52,9 +52,11 @@ exports.Cpu = async (instance) => {
                     resolve(cpuUsage);
                 }
             } else {
+                console.log('1 cpu', response);
                 resolve(-1);
             }
         } catch (err) {
+            console.log('2 cpu');
             resolve(-1);
         }
     });
