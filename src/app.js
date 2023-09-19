@@ -65,7 +65,7 @@ const api = require('./controllers/ApiController');
 
 // handles
 
-let instances = [];
+let instances = null;
 let loadbalance = null;
 if (os.platform() != 'linux') {
     console.log('🔴 Sistema deve ser linux');
