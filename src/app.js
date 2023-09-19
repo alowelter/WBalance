@@ -121,11 +121,6 @@ app.get('/ping', (req, res) => {
     return res.send('pong');
 });
 app.get('/cpu', async (req, res) => {
-    const os = require('os');
-    if (os.type() === 'Windows_NT') {
-        return res.send('Windows');
-    }
-
     const { exec } = require('child_process');
     let result = {};
 
