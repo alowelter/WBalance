@@ -215,6 +215,8 @@ async function serverImprove() {
         }
     });
 
+    if (instances.length < 1) return;
+
     instances.forEach((instance) => {
         axios.get(`http://${instance.internal_ip}/cpu.php`).then((response) => {
             if (response.status == 200) {
