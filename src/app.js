@@ -120,16 +120,31 @@ app.get('/ping', (req, res) => {
     console.log(`🔹 ping`);
     return res.send('pong');
 });
+
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 app.get('/cpu', async (req, res) => {
     const { exec } = require('child_process');
-    let result = {};
+    let result = {
+        loadbalance: {},
+        backend: {
+            webserver: [],
+        },
+    };
 
-    // get #cpu usage
-    exec("vmstat 1 2 | tail -nco 1 | awk '{print 100 - $15}'", (err, stdout, stderr) => {
-        if (err) return res.send(err);
-        result.cpu = stdout;
-    });
-    return res.status(200).json(result);
+    try {
+        const { stdout } = await exec("vmstat 1 2 | tail -nco 1 | awk '{print 100 - $15}'");
+        result.loadbalance.cpu = stdout.trim();
+
+        instances.forEach((instance) => {
+            result.backend.webserver.push({ ip: instance.internal_ip, cpu: instance.cpu });
+        });
+
+        return res.status(200).json(result);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'An error occurred' });
+    }
 });
 
 // Auto-deploy
