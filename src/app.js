@@ -181,6 +181,11 @@ app.get('/add-instance', async (req, res, next) => {
 
 app.use(async (req, res, next) => {
     const target = getServer();
+    if (!target) {
+        console.log('🔴 Nenhuma instancia encontrada');
+        return res.status(500).json({ error: 'Nenhuma instancia encontrada' });
+    }
+
     console.log(`🔸 {${req.method}} > ${req.path} 🔜 ${target.internal_ip}`);
     target.proxy(req, res, next);
 });
