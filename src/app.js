@@ -188,77 +188,54 @@ async function serverImprove() {
                 console.log('🔴 Nenhuma instancia encontrada - Criando 1');
                 InstancesController.Create();
             }
-            _instances.forEach((_instance) => {
+            _instances.forEach(async (_instance) => {
                 if (_instance.status == 'active') {
-                    let instance = instances.find((instance) => instance.id === _instance.id);
-                    if (!instance) {
-                        let proxyurl = `https://${_instance.internal_ip}/`;
-                        _instance.proxy = createProxyMiddleware({
-                            target: proxyurl,
-                            logLevel: 'warn',
-                            onProxyRes: (proxyRes, req, res) => {
-                                proxyRes.headers['Server'] = 'WBalance by Welm 09/2023 ';
-                            },
-                        });
-                        _instance.cpu = 0;
-                        instances.push(_instance);
+                    let found = instances.find((instance) => instance.id === _instance.id) || null;
+                    if (!found) {
+                        _instance.cpu = await api.Cpu(_instance);
+                        if (_instance.cpu >= 0) {
+                            _instance.proxy = createProxyMiddleware({
+                                target: `https://${_instance.internal_ip}/`,
+                                logLevel: 'warn',
+                                onProxyRes: (proxyRes, req, res) => {
+                                    proxyRes.headers['Server'] = 'WBalance by Welm 09/2023 ';
+                                },
+                            });
+                        }
                     }
                 }
             });
+            // Remove isntancias fantasmas
             instances.forEach((instance) => {
                 let _instance = _instances.find((_instance) => _instance.id === instance.id) || null;
-                if (!_instance) {
-                    instance.status = 'deleted';
+                if (!_instance) instance.status = 'deleted';
+            });
+            instances.forEach(async (instance) => {
+                if (instance.status !== 'deleted') {
+                    instance.cpu = await api.Cpu(_instance);
+                    if (instance.cpu < 0) instance.status = 'deleted';
                 }
             });
             instances = instances.filter((instance) => instance.status != 'deleted');
-        }
-    });
-
-    if (instances.length < 1) return;
-
-    instances.forEach((instance) => {
-        axios
-            .get(`http://${instance.internal_ip}/cpu.php`)
-            .then((response) => {
-                if (response.status == 200) {
-                    const cpuUsageMatch = response.data.match(/CPU:(\d+)%/);
-                    if (cpuUsageMatch && cpuUsageMatch[1]) {
-                        let cpuUsage = parseInt(cpuUsageMatch[1], 10);
-                        if (cpuUsage > 100) cpuUsage = 100;
-                        if (cpuUsage < 1) puUsage = 1;
-                        instance.cpu = cpuUsage;
-                        console.log(`🔹 ${instance.internal_ip} > CPU Usage: ${cpuUsage}%`);
-                    } else {
-                        console.log(`🔹 ${instance.internal_ip} > CPU Usage not found in response`);
-                        instance.status = 'deleted';
-                    }
-                }
-            })
-            .catch((error) => {
-                console.log(`🔴 ${instance.internal_ip} > Indisponível`);
-                instance.status = 'deleted';
+            let cpuUsageSum = 0;
+            instances.forEach((instance) => {
+                cpuUsageSum += instance.cpu;
             });
-    });
-    instances = instances.filter((instance) => instance.status != 'deleted');
-
-    let cpuUsageSum = 0;
-    instances.forEach((instance) => {
-        cpuUsageSum += instance.cpu;
-    });
-    let cpuUsageAverage = Math.round(cpuUsageSum / instances.length);
-    console.log('🟣 Servidores: ', instances.length, ' - CPU total: ', cpuUsageAverage, '%');
-    if (cpuUsageAverage >= 80) {
-        if (instances.length < process.env.INSTANCES_MAX) {
-            console.log('🔴 CPU total acima de 80% - Criando 1');
-            InstancesController.Create();
+            let cpuUsageAverage = Math.round(cpuUsageSum / instances.length);
+            console.log('🟣 Servidores: ', instances.length, ' - CPU total: ', cpuUsageAverage, '%');
         }
-    }
-    if (cpuUsageAverage < 40) {
-        if (instances.length > process.env.INSTANCES_MIN) {
-            console.log('🟡 CPU total inferior a 40% - liberando instancia');
-            let lastinstance = instances[instances.length - 1];
-            InstancesController.Destroy(lastinstance.id);
+        if (cpuUsageAverage >= 80) {
+            if (instances.length < process.env.INSTANCES_MAX) {
+                console.log('🔴 CPU total acima de 80% - Criando 1');
+                InstancesController.Create();
+            }
         }
-    }
+        if (cpuUsageAverage < 40) {
+            if (instances.length > process.env.INSTANCES_MIN) {
+                console.log('🟡 CPU total inferior a 40% - liberando instancia');
+                let lastinstance = instances[instances.length - 1];
+                InstancesController.Destroy(lastinstance.id);
+            }
+        }
+    });
 }
