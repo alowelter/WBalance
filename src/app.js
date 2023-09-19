@@ -181,82 +181,62 @@ app.use(async (req, res, next) => {
 });
 
 async function serverImprove() {
-    const instancesResponse = await api.instances();
-    local_instances = instancesResponse.data.instances;
-    const promises = local_instances.map(async (_instance) => {
-        let i = null;
-        if (instances && instances.length > 0) {
-            i = instances.find((instance) => instance.id === _instance.id);
-        }
-        if (!i) {
-            if (_instance.status === 'active') {
-                let proxyurl = `https://${_instance.internal_ip}/`;
-                _instance.proxy = createProxyMiddleware({
-                    target: proxyurl,
-                    logLevel: 'warn',
-                    onProxyRes: (proxyRes, req, res) => {
-                        proxyRes.headers['Server'] = 'WBalance by Welm 09/2023 ';
-                    },
-                });
-                _instance.cpu = 0;
-                instances.push(_instance);
-            }
-        }
-        try {
-            if (_instance.status === 'active') {
-                try {
-                    const response = await axios.get(`http://${_instance.internal_ip}/cpu.php`);
-                    if (response.status === 200) {
-                        const cpuUsageMatch = response.data.match(/CPU:(\d+)%/);
-                        if (cpuUsageMatch && cpuUsageMatch[1]) {
-                            let cpuUsage = parseInt(cpuUsageMatch[1], 10);
-                            if (cpuUsage > 100) cpuUsage = 100;
-                            if (cpuUsage < 1) puUsage = 1;
-                            _instance.cpu = cpuUsage;
-                            let i = instances.findIndex((instance) => instance.id === _instance.id);
-                            i.cpu = cpuUsage;
-                            //if (process.env.LOG_MODE.toUpperCase() == 'DEBUG')
-                            console.log(`🔹 ${_instance.internal_ip} > CPU Usage: ${cpuUsage}%`);
-                        } else {
-                            console.log(`🔹 ${_instance.internal_ip} > CPU Usage not found in response`);
-                            _instance.status = 'deleted';
-                        }
-                    } else {
-                        console.log(`🔹 ${_instance.internal_ip} > CPU Usage request failed`);
-                        _instance.status = 'deleted';
+    api.instances().then((response) => {
+        if (response.status == 200) {
+            let _instances = response.data.instances;
+            _instances.forEach((_instance) => {
+                if (_instance.status == 'active') {
+                    let instance = instances.find((instance) => instance.id === _instance.id);
+                    if (!instance) {
+                        let proxyurl = `https://${_instance.internal_ip}/`;
+                        _instance.proxy = createProxyMiddleware({
+                            target: proxyurl,
+                            logLevel: 'warn',
+                            onProxyRes: (proxyRes, req, res) => {
+                                proxyRes.headers['Server'] = 'WBalance by Welm 09/2023 ';
+                            },
+                        });
+                        _instance.cpu = 0;
+                        instances.push(_instance);
                     }
-                } catch (error) {
-                    console.error(`🔹 ${_instance.internal_ip} > Error: ${error.message}`);
-                    _instance.status = 'deleted';
                 }
-            } else {
-                _instance.cpu = 0;
-            }
-        } catch (error) {
-            console.error(`🔹 ${_instance.internal_ip} > Error: ${error.message}`);
+            });
+            instances.forEach((instance) => {
+                let _instance = _instances.find((_instance) => _instance.id === instance.id) || null;
+                if (!_instance) {
+                    instance.status = 'deleted';
+                }
+            });
+            instances = instances.filter((instance) => instance.status != 'deleted');
         }
     });
-    await Promise.all(promises);
-
-    let cpuUsageAverage = 0;
 
     instances.forEach((instance) => {
-        const _instance = local_instances.find((_instance) => _instance.id === instance.id) || null;
-        if (!_instance) {
-            instance.status = 'deleted';
-        }
+        axios.get(`http://${_instance.internal_ip}/cpu.php`).then((response) => {
+            if (response.status == 200) {
+                const cpuUsageMatch = response.data.match(/CPU:(\d+)%/);
+                if (cpuUsageMatch && cpuUsageMatch[1]) {
+                    let cpuUsage = parseInt(cpuUsageMatch[1], 10);
+                    if (cpuUsage > 100) cpuUsage = 100;
+                    if (cpuUsage < 1) puUsage = 1;
+                    instance.cpu = cpuUsage;
+                    console.log(`🔹 ${_instance.internal_ip} > CPU Usage: ${cpuUsage}%`);
+                } else {
+                    console.log(`🔹 ${_instance.internal_ip} > CPU Usage not found in response`);
+                    _instance.status = 'deleted';
+                }
+            }
+        });
     });
-
-    // remove deletados
     instances = instances.filter((instance) => instance.status != 'deleted');
 
-    // sum all cpu from instances in  cpuUsageSum
+    // sumn all cpu from instances em divide by intances.length
+
     let cpuUsageSum = 0;
     instances.forEach((instance) => {
         cpuUsageSum += instance.cpu;
     });
-
-    cpuUsageAverage = Math.round(cpuUsageSum / instances.length);
+    let cpuUsageAverage = Math.round(cpuUsageSum / instances.length);
     if (instances.length < 1) {
         console.log('🔴 Nenhuma instancia encontrada - Criando 1');
         InstancesController.Create();
