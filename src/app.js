@@ -24,11 +24,12 @@ const URL = `https://${process.env.BASEURL}`;
 app.use(
     expressCspHeader({
         directives: {
-            'default-src': [SELF, INLINE, URL],
+            'default-src': [SELF, INLINE, `*${process.env.BASEURL}`],
             'script-src': [SELF, INLINE, EVAL, `http://${process.env.BASEURL}`, URL],
             'worker-src': [SELF, BLOB],
             'frame-src': [SELF, BLOB, URL],
-            'img-src': [SELF, DATA, BLOB],
+            //'img-src': [SELF, DATA, BLOB],
+            'img-src': ['*'],
             'connect-src': [SELF, URL, `wss://${process.env.BASEURL}`],
             'form-action': [SELF, URL],
 
