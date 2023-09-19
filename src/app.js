@@ -184,6 +184,10 @@ async function serverImprove() {
     api.instances().then((response) => {
         if (response.status == 200) {
             let _instances = response.data.instances;
+            if (_instances.length < 1) {
+                console.log('🔴 Nenhuma instancia encontrada - Criando 1');
+                InstancesController.Create();
+            }
             _instances.forEach((_instance) => {
                 if (_instance.status == 'active') {
                     let instance = instances.find((instance) => instance.id === _instance.id);
@@ -237,10 +241,6 @@ async function serverImprove() {
         cpuUsageSum += instance.cpu;
     });
     let cpuUsageAverage = Math.round(cpuUsageSum / instances.length);
-    if (instances.length < 1) {
-        console.log('🔴 Nenhuma instancia encontrada - Criando 1');
-        InstancesController.Create();
-    }
     console.log('🟣 Servidores: ', instances.length, ' - CPU total: ', cpuUsageAverage, '%');
     if (cpuUsageAverage >= 80) {
         if (instances.length < process.env.INSTANCES_MAX) {
