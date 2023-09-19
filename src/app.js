@@ -124,6 +124,14 @@ app.get('/ping', (req, res) => {
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 const osutils = require('os-utils');
+function getCpuUsage() {
+    return new Promise((resolve, reject) => {
+        osutils.cpuUsage((value) => {
+            resolve(value);
+        });
+    });
+}
+
 app.get('/cpu', async (req, res) => {
     const { exec } = require('child_process');
     let result = {
@@ -134,7 +142,7 @@ app.get('/cpu', async (req, res) => {
     };
 
     try {
-        result.loadbalance.cpu = await osutils.cpuUsage();
+        result.loadbalance.cpu = await getCpuUsage();
         instances.forEach((instance) => {
             result.backend.webserver.push({ ip: instance.internal_ip, cpu: instance.cpu });
         });
