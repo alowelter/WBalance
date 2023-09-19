@@ -123,6 +123,7 @@ app.get('/ping', (req, res) => {
 
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
+//const osutils = require('os-utils');
 app.get('/cpu', async (req, res) => {
     const { exec } = require('child_process');
     let result = {
@@ -133,8 +134,7 @@ app.get('/cpu', async (req, res) => {
     };
 
     try {
-        const { stdout } = await exec("vmstat 1 1 | tail -n 1 | awk '{print 100 - $15}'");
-        result.loadbalance.cpu = stdout;
+        //result.loadbalance.cpu = await osutils.cpuUsage();
 
         instances.forEach((instance) => {
             result.backend.webserver.push({ ip: instance.internal_ip, cpu: instance.cpu });
