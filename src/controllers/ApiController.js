@@ -39,26 +39,25 @@ exports.loadbalance = async (req, res) => {
     });
 };
 
-exports.Cpu = async (instance) => {
-    return new Promise(async (resolve) => {
-        try {
-            let response = await axios.get(`http://${instance.internal_ip}/cpu.php`);
+exports.Cpu = (instance) => {
+    return axios
+        .get(`http://${instance.internal_ip}/cpu.php`)
+        .then((response) => {
             if (response.status == 200) {
                 const cpuUsageMatch = response.data.match(/CPU:(\d+)%/);
+                let cpuUsage = -1;
                 if (cpuUsageMatch && cpuUsageMatch[1]) {
-                    let cpuUsage = parseInt(cpuUsageMatch[1], 10);
+                    cpuUsage = parseInt(cpuUsageMatch[1], 10);
                     if (cpuUsage > 100) cpuUsage = 100;
                     if (cpuUsage < 1) puUsage = 1;
-                    console.log('0 cpu', cpuUsage, response);
-                    resolve(cpuUsage);
+                    console.log('0 cpu', cpuUsage, response.data);
                 }
+                return cpuUsage;
             } else {
-                console.log('1 cpu', response);
-                resolve(-1);
+                return -1;
             }
-        } catch (err) {
-            console.log('2 cpu');
-            resolve(-1);
-        }
-    });
+        })
+        .catch((err) => {
+            return -1;
+        });
 };
