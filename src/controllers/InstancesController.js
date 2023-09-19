@@ -142,8 +142,6 @@ exports.Create = async (req = null, res = null, next = null) => {
             enable_vpc: true,
         };
 
-        console.log('🟣 Criando nova instancia');
-
         let ret = await api.Post('/instances', params);
 
         if (res) {
