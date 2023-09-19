@@ -22,11 +22,11 @@ app.use(cors());
 app.use(
     expressCspHeader({
         directives: {
-            'default-src': [SELF],
-            'script-src': [SELF, INLINE],
-            'style-src': [SELF, INLINE],
+            'default-src': [SELF, `https://${process.env.BASEURL}`],
+            'script-src': [SELF, INLINE, `https://${process.env.BASEURL}`],
+            'style-src': [SELF, INLINE, `https://${process.env.BASEURL}`],
             'img-src': ['data:', `https://${process.env.BASEURL}`],
-            'worker-src': [NONE],
+            'worker-src': [NONE, `https://${process.env.BASEURL}`],
             'block-all-mixed-content': true,
         },
     })
