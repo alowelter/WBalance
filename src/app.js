@@ -189,7 +189,10 @@ async function serverImprove() {
     const instancesResponse = await api.instances();
     local_instances = instancesResponse.data.instances;
     const promises = local_instances.map(async (_instance) => {
-        let i = instances.find((instance) => instance.id === _instance.id);
+        let i = null;
+        if (instance) {
+            i = instances.find((instance) => instance.id === _instance.id);
+        }
         if (!i) {
             if (_instance.status === 'active') {
                 let proxyurl = `http://${_instance.internal_ip}`;
