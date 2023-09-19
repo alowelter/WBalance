@@ -49,7 +49,7 @@ cd WBalance
 npm install
 
 dnf install certbot -y
-certbot certonly
+certbot certonly --standalone --email marcelo@alolwelter.com.br --agree-tos -d example.com
 
 
 pm2 start pm2.json

@@ -85,9 +85,14 @@ write_files:
 
 runcmd:
   - mount -t nfs 10.43.96.3:/storage /usr/share/nginx/html
+  - mkdir /etc/letsencrypt
+  - mount -t nfs 10.43.96.3:/etc/letsencrypt /etc/letsencrypt
   - echo "10.43.96.3:/storage /usr/share/nginx/html nfs defaults 0 0" >> /etc/fstab
+  - echo "10.43.96.3:/etc/letsencrypt /etc/letsencrypt nfs defaults 0 0" >> /etc/fstab
   - firewall-cmd --zone=public --add-service=http --permanent
+  - firewall-cmd --zone=public --add-service=https --permanent
   - firewall-cmd --zone=public --add-port=80/tcp --permanent
+  - firewall-cmd --zone=public --add-port=443/tcp --permanent
   - systemctl enable nginx
   - systemctl enable php-fpm
   - reboot

@@ -184,7 +184,7 @@ async function serverImprove() {
         }
         if (!i) {
             if (_instance.status === 'active') {
-                let proxyurl = `http://${_instance.internal_ip}`;
+                let proxyurl = `https://${_instance.internal_ip}`;
                 _instance.proxy = createProxyMiddleware({
                     target: proxyurl,
                     logLevel: 'warn',
