@@ -23,7 +23,7 @@ app.use(
     expressCspHeader({
         directives: {
             'default-src': [SELF],
-            'script-src': [SELF, `https://${process.env.BASEURL}`],
+            'script-src': [SELF, INLINE, EVAL, BLOB, `https://${process.env.BASEURL}`],
             'worker-src': [SELF, BLOB],
             'frame-src': [SELF, BLOB, `https://${process.env.BASEURL}`],
             'img-src': [SELF, DATA, BLOB],
