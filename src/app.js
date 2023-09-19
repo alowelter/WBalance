@@ -254,10 +254,16 @@ async function serverImprove() {
     if (instances.length > 1) {
         let cpuUsageSum = 0;
         instances.forEach((instance) => {
-            cpuUsageSum += instance.cpu;
+            const _instance = local_instances.find((_instance) => _instance.id === instance.id) || null;
+            if (!_instance) {
+                instance.status = 'deleted';
+            } else {
+                cpuUsageSum += instance.cpu;
+            }
         });
         cpuUsageAverage = cpuUsageSum / instances.length;
     }
+    instances = instances.filter((instance) => instance.status != 'deleted');
     if (instances.length === 1) {
         const cpuUsageAverage = instances[0].cpu;
     }
