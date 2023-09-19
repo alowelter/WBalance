@@ -266,9 +266,9 @@ async function serverImprove() {
             InstancesController.Create();
         }
     }
-    if (cpuUsageAverage < 60) {
+    if (cpuUsageAverage < 40) {
         if (instances.length > process.env.INSTANCES_MIN) {
-            console.log('🟡 CPU total inferior a 60% - liberando instancia');
+            console.log('🟡 CPU total inferior a 40% - liberando instancia');
             let lastinstance = instances[instances.length - 1];
             InstancesController.Destroy(lastinstance.id);
         }
