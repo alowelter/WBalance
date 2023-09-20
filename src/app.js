@@ -239,7 +239,7 @@ async function serverImprove() {
         const cpuUsageSum = instances.reduce((sum, instance) => sum + instance.cpu, 0);
         const cpuUsageAverage = Math.round(cpuUsageSum / instances.length);
 
-        console.log(`🔹 [Instances: ${instances.length} - [CPU total: ${cpuUsageAverage}%]`);
+        console.log(`🔹 [Instances: ${instances.length}] - [CPU total: ${cpuUsageAverage}%]`);
 
         // Lógica para criar ou destruir instâncias baseada no uso da CPU
         const currentTime = Date.now();
