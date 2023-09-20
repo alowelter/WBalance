@@ -75,7 +75,7 @@ http.createServer(app).listen(3001, () => {
 // Next server index
 let currIndex = 0;
 // Get next server
-function getServer(call = 0) {
+function getServer() {
     try {
         if (!instances || instances.length < 1) {
             return null;
@@ -86,13 +86,14 @@ function getServer(call = 0) {
 
         // if instace.active not active get another
         if (instances[currIndex].status != 'active') {
-            return getServer(call + 1);
+            return getServer();
         }
 
-        if (instances[currIndex].cpu >= 80) {
-            return instances.reduce((prev, curr) => {
+        if (instances[currIndex].cpu >= 90) {
+            let n = instances.reduce((prev, curr) => {
                 return prev.cpu < curr.cpu ? prev : curr;
             });
+            if (n.cpu < 90) return n;
         }
 
         return instances[currIndex];
