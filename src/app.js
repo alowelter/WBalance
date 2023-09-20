@@ -210,8 +210,6 @@ async function serverImprove() {
 
             if (!found) {
                 _instance.cpu = await api.Cpu(_instance);
-                console.log('⭕', _instance.internal_ip, _instance.cpu);
-
                 if (_instance.cpu >= 0) {
                     _instance.proxy = createProxyMiddleware({
                         target: `https://${_instance.internal_ip}/`,
@@ -221,6 +219,9 @@ async function serverImprove() {
                         },
                     });
                     return _instance;
+                } else {
+                    console.log('...addprepare 2', _instance.internal_ip);
+                    instancesPrepare.push(_instance);
                 }
             }
             return null;
@@ -237,10 +238,6 @@ async function serverImprove() {
         // Atualizar uso da CPU e remover instâncias inválidas
         const updateCpuUsage = async (instance) => {
             instance.cpu = await api.Cpu(instance);
-            if (instance.cpu < 0) {
-                console.log('...addprepare 2', instance.internal_ip);
-                instancesPrepare.push(instance);
-            }
             return instance.cpu >= 0 ? instance : null;
         };
 
