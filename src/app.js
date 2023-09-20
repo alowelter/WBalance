@@ -13,6 +13,9 @@ const axios = require('axios');
 require('dotenv').config();
 process.env.TZ = 'America/Sao_Paulo';
 
+// registrador para evitar overload de criação e destruição de instancias
+const poolInStancesRefreshTime = Date.now();
+
 // Cors
 app.use(cors());
 
@@ -239,11 +242,15 @@ async function serverImprove() {
         console.log(`🔹 [Instances: ${instances.length} - [CPU total: ${cpuUsageAverage}%]`);
 
         // Lógica para criar ou destruir instâncias baseada no uso da CPU
-        if (cpuUsageAverage >= 80 && instances.length < process.env.INSTANCES_MAX) {
-            InstancesController.Create();
-        } else if (cpuUsageAverage < 40 && instances.length > process.env.INSTANCES_MIN) {
-            const lastInstance = instances.pop();
-            InstancesController.Destroy(lastInstance.id);
+        const currentTime = Date.now();
+        if (!poolInStancesRefreshTime || currentTime - poolInStancesRefreshTime >= 5 * 60 * 1000) {
+            if (cpuUsageAverage >= 80 && instances.length < process.env.INSTANCES_MAX) {
+                InstancesController.Create();
+            } else if (cpuUsageAverage < 40 && instances.length > process.env.INSTANCES_MIN) {
+                const lastInstance = instances.pop();
+                InstancesController.Destroy(lastInstance.id);
+            }
+            poolInStancesRefreshTime = Date.now();
         }
     } catch (error) {
         console.error(error);
