@@ -51,7 +51,7 @@ exports.Cpu = (instance) => {
                     if (cpuUsage > 100) cpuUsage = 100;
                     if (cpuUsage < 1) puUsage = 1;
                 }
-                console.log('⭕', instance.internal_ip, cpuUsage, '%');
+                //console.log('⭕', instance.internal_ip, cpuUsage, '%');
 
                 return cpuUsage;
             } else {
