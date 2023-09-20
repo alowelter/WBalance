@@ -247,7 +247,10 @@ async function serverImprove() {
         // Atualizar uso da CPU e remover instâncias inválidas
         const updateCpuUsage = async (instance) => {
             instance.cpu = await api.Cpu(instance);
-            if (instance.cpu < 0 && instances.length < 2) return instance;
+            if (instance.cpu < 0 && instances.length < 2) {
+                instance.cpu = 100;
+                return instance;
+            }
             return instance.cpu >= 0 ? instance : null;
         };
 
