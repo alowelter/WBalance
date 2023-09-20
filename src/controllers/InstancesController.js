@@ -176,7 +176,7 @@ exports.Create = async (req = null, res = null, next = null) => {
         }
     } catch (error) {
         console.log('🔴 Erro criando instancia', error);
-        return res.status(500).json({ error: 'Erro ao criar a instância' });
+        return res.status(500).json({ error: error.data.error });
     }
 };
 
