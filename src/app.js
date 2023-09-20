@@ -14,7 +14,7 @@ require('dotenv').config();
 process.env.TZ = 'America/Sao_Paulo';
 
 // registrador para evitar overload de criação e destruição de instancias
-const poolInStancesRefreshTime = Date.now();
+let poolInStancesRefreshTime = Date.now();
 
 // Cors
 app.use(cors());
