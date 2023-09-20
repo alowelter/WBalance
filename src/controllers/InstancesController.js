@@ -143,6 +143,7 @@ exports.Create = async (req = null, res = null, next = null) => {
         };
 
         let ret = await api.Post('/instances', params);
+        console.log('🟠 Criando instancia');
 
         if (res) {
             return res.status(200).json({ enviado: params, retorno: ret.data });
