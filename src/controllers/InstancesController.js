@@ -146,9 +146,19 @@ exports.Create = async (req = null, res = null, next = null) => {
         // convertstring to base64
         const base64 = Buffer.from(instanceScript).toString('base64');
 
+        // INSTANCE_PLAN=vc2-1c-1gb-sc1
+        // INSTANCE_PLAN=vc2-1c-2gb-sc1
+        // INSTANCE_PLAN=vc2-2c-2gb-sc1
+        // INSTANCE_PLAN=vc2-2c-4gb-sc1
+        // INSTANCE_PLAN=vc2-4c-8gb-sc1
+        // INSTANCE_PLAN=vc2-6c-16gb-sc1
+        // INSTANCE_PLAN=vc2-8c-32gb-sc1
+        // INSTANCE_PLAN=vc2-16c-64gb-sc1
+        // INSTANCE_PLAN=vc2-24c-96gb-sc1
+
         const params = {
             region: 'sao',
-            plan: 'vc2-1c-1gb-sc1',
+            plan: process.env.INSTANCE_PLAN,
             label: `${process.env.VULTR_SERVER_LABEL_PREFIX}_webserver`,
             os_id: 1868,
             user_data: base64, // Certifique-se de que instanceScript esteja definido corretamente
@@ -159,7 +169,7 @@ exports.Create = async (req = null, res = null, next = null) => {
         };
 
         let ret = await api.Post('/instances', params);
-        console.log('🟠 Criando instancia');
+        console.log('🟠 Criando instancia', process.env.INSTANCE_PLAN);
 
         if (res) {
             return res.status(200).json({ enviado: params, retorno: ret.data });
