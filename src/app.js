@@ -190,7 +190,7 @@ app.use(async (req, res, next) => {
 
 setInterval(async () => {
     await serverImprove();
-}, 20 * 1000); // 1 minuto
+}, 10 * 1000); // 1 minuto
 
 async function serverImprove() {
     try {
@@ -254,7 +254,7 @@ async function serverImprove() {
         const cpuUsageAverage = Math.round(cpuUsageSum / instances.length);
         const lbcpu = await getCpuUsage();
 
-        console.log(`🔹[local cpu: ${lbcpu}%] - [Instances: ${instances.length}] - [cpu total: ${cpuUsageAverage}%] - [Criando: ${instancesPrepare.length}]`);
+        console.log(`🔹[local cpu: ${Math.round(lbcpu)}%] - [Instances: ${instances.length}] - [cpu total: ${cpuUsageAverage}%] - [Criando: ${instancesPrepare.length}]`);
 
         // Lógica para criar ou destruir instâncias baseada no uso da CPU
         const currentTime = Date.now();
@@ -266,74 +266,6 @@ async function serverImprove() {
                 InstancesController.Destroy(lastInstance.id);
             }
             poolInStancesRefreshTime = Date.now();
-        }
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-async function _serverImprove() {
-    try {
-        const response = await api.instances();
-
-        if (response.status !== 200) return;
-
-        const _instances = response.data.instances;
-
-        if (_instances.length < 1) {
-            console.log('🔴 Nenhuma instancia encontrada - Criando 1');
-            InstancesController.Create();
-            return;
-        }
-
-        const updateInstances = async (_instance) => {
-            if (_instance.status !== 'active') return null;
-
-            const found = instances.find((instance) => instance.id === _instance.id);
-
-            if (!found) {
-                _instance.cpu = await api.Cpu(_instance);
-
-                if (_instance.cpu >= 0) {
-                    _instance.proxy = createProxyMiddleware({
-                        target: `https://${_instance.internal_ip}/`,
-                        logLevel: 'warn',
-                        onProxyRes: (proxyRes, req, res) => {
-                            proxyRes.headers['Server'] = 'WBalance by Welm 09/2023 ';
-                        },
-                    });
-                    return _instance;
-                }
-            }
-            return null;
-        };
-
-        const newInstances = await Promise.all(_instances.map(updateInstances));
-        instances = [...instances, ...newInstances.filter(Boolean)];
-
-        // Remover instâncias fantasmas
-        instances = instances.filter((instance) => {
-            return _instances.some((_instance) => _instance.id === instance.id);
-        });
-
-        // Atualizar uso da CPU e remover instâncias inválidas
-        const updateCpuUsage = async (instance) => {
-            instance.cpu = await api.Cpu(instance);
-            return instance.cpu >= 0 ? instance : null;
-        };
-
-        instances = await Promise.all(instances.map(updateCpuUsage)).then((results) => results.filter(Boolean));
-
-        // Cálculo da CPU
-        const cpuUsageSum = instances.reduce((sum, instance) => sum + instance.cpu, 0);
-        const cpuUsageAverage = Math.round(cpuUsageSum / instances.length);
-
-        // Lógica para criar ou destruir instâncias baseada no uso da CPU
-        if (cpuUsageAverage >= 80 && instances.length < process.env.INSTANCES_MAX) {
-            InstancesController.Create();
-        } else if (cpuUsageAverage < 40 && instances.length > process.env.INSTANCES_MIN) {
-            const lastInstance = instances.pop();
-            InstancesController.Destroy(lastInstance.id);
         }
     } catch (error) {
         console.error(error);
