@@ -123,10 +123,6 @@ async function main() {
 
 main();
 
-setInterval(async () => {
-    await serverImprove();
-}, 30 * 1000); // 1 minuto
-
 app.get('/ping', (req, res) => {
     console.log(`🔹 ping`);
     return res.send('pong');
@@ -190,6 +186,10 @@ app.use(async (req, res, next) => {
     if (process.env.LOG_MODE.toUpperCase() == 'DEBUG') console.log(`🔸 {${req.method}} > ${req.path} 🔜 ${target.internal_ip}`);
     if (target) target.proxy(req, res, next);
 });
+
+setInterval(async () => {
+    await serverImprove();
+}, 20 * 1000); // 1 minuto
 
 async function serverImprove() {
     try {
