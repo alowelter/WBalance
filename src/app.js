@@ -246,7 +246,7 @@ async function serverImprove() {
         const cpuUsageAverage = Math.round(cpuUsageSum / instances.length);
         const lbcpu = await getCpuUsage();
 
-        console.log(`🔹[local cpu: ${lbcpu}] - [Instances: ${instances.length}] - [cpu total: ${cpuUsageAverage}%] - [Criando: ${instancesPrepare.length}]`);
+        console.log(`🔹[local cpu: ${lbcpu}%] - [Instances: ${instances.length}] - [cpu total: ${cpuUsageAverage}%] - [Criando: ${instancesPrepare.length}]`);
 
         // Lógica para criar ou destruir instâncias baseada no uso da CPU
         const currentTime = Date.now();
@@ -254,7 +254,7 @@ async function serverImprove() {
             if (cpuUsageAverage >= 80 && instances.length < process.env.INSTANCES_MAX && instancesPrepare.length <= 0) {
                 InstancesController.Create();
                 console.log('🔵 Criando instancia');
-            } else if (cpuUsageAverage < 40 && instances.length > process.env.INSTANCES_MIN) {
+            } else if ((cpuUsageAverage < 40 && instances.length > process.env.INSTANCES_MIN) || instances.length > process.env.INSTANCES_MAX) {
                 const lastInstance = instances.pop();
                 InstancesController.Destroy(lastInstance.id);
                 console.log('🔴 Excluindo instancia');
