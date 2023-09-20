@@ -85,7 +85,7 @@ function getServer() {
         currIndex = (currIndex + 1) % instances.length;
 
         // if instace.active not active get another
-        if (instances[currIndex].status != 'active') {
+        if (instances[currIndex].status != 'active' || instances[currIndex]?.cpu > 80) {
             return getServer();
         }
         return instances[currIndex];
