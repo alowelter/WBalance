@@ -130,14 +130,14 @@ runcmd:
 
 exports.Plans = async (req = null, res = null, next = null) => {
     try {
-        let ret = await api.Get('/plans', params);
+        let ret = await api.Get('/plans');
 
         if (res) {
             return res.status(200).json(ret.data.plans);
         }
     } catch (error) {
-        console.log('🔴 Erro criando instancia', error);
-        return res.status(500).json({ error: 'Erro ao criar a instância' });
+        console.log('🔴 Erro Obtendo planos', error);
+        return res.status(500).json({ error: 'Eror lendo planos' });
     }
 };
 
