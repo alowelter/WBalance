@@ -88,8 +88,11 @@ function getServer(call = 0) {
         if (instances[currIndex].status != 'active') {
             return getServer(call + 1);
         }
-        if (instances[currIndex]?.cpu > 80 && call < instances.length) {
-            return getServer(call + 1);
+
+        if (instances[currIndex].cpu >= 80) {
+            return instances.reduce((prev, curr) => {
+                return prev.cpu < curr.cpu ? prev : curr;
+            });
         }
 
         return instances[currIndex];
