@@ -181,65 +181,69 @@ app.use(async (req, res, next) => {
 });
 
 async function serverImprove() {
-    api.instances().then((response) => {
-        if (response.status == 200) {
-            let _instances = response.data.instances;
-            if (_instances.length < 1) {
-                console.log('🔴 Nenhuma instancia encontrada - Criando 1');
-                InstancesController.Create();
-            }
-            _instances.forEach(async (_instance) => {
-                if (_instance.status == 'active') {
-                    let found = instances.find((instance) => instance.id === _instance.id) || null;
-                    if (!found) {
-                        _instance.cpu = await api.Cpu(_instance);
-                        if (_instance.cpu >= 0) {
-                            _instance.proxy = createProxyMiddleware({
-                                target: `https://${_instance.internal_ip}/`,
-                                logLevel: 'warn',
-                                onProxyRes: (proxyRes, req, res) => {
-                                    proxyRes.headers['Server'] = 'WBalance by Welm 09/2023 ';
-                                },
-                            });
-                            instances.push(_instance);
-                        }
-                    }
-                }
-            });
-            // Remove isntancias fantasmas
-            instances.forEach((instance) => {
-                let _instance = _instances.find((_instance) => _instance.id === instance.id) || null;
-                if (!_instance) instance.status = 'deleted';
-            });
-            instances = instances.filter((instance) => instance.status != 'deleted');
-            if (instances.length > 0) {
-                console.log('🟣 Servidores: ', instances.length);
-                let cpuUsageSum = 0;
-                instances.forEach(async (instance) => {
-                    instance.cpu = await api.Cpu(instance);
-                    if (instance.cpu < 0) {
-                        instance.status = 'deleted';
-                    } else {
-                        console.log(`🔹 ${instance.internal_ip} > CPU Usage: ${instance.cpu}%`);
-                        cpuUsageSum += instance.cpu;
-                    }
-                });
-                let cpuUsageAverage = Math.round(cpuUsageSum / instances.length);
-                console.log('🟣 CPU total: ', cpuUsageAverage, '%');
-                if (cpuUsageAverage >= 80) {
-                    if (instances.length < process.env.INSTANCES_MAX) {
-                        console.log('🔴 CPU total acima de 80% - Criando 1');
-                        InstancesController.Create();
-                    }
-                }
-                if (cpuUsageAverage < 40) {
-                    if (instances.length > process.env.INSTANCES_MIN) {
-                        console.log('🟡 CPU total inferior a 40% - liberando instancia');
-                        let lastinstance = instances[instances.length - 1];
-                        InstancesController.Destroy(lastinstance.id);
-                    }
-                }
-            }
+    try {
+        const response = await api.instances();
+
+        if (response.status !== 200) return;
+
+        const _instances = response.data.instances;
+
+        if (_instances.length < 1) {
+            console.log('🔴 Nenhuma instancia encontrada - Criando 1');
+            InstancesController.Create();
+            return;
         }
-    });
+
+        const updateInstances = async (_instance) => {
+            if (_instance.status !== 'active') return null;
+
+            const found = instances.find((instance) => instance.id === _instance.id);
+
+            if (!found) {
+                _instance.cpu = await api.Cpu(_instance);
+
+                if (_instance.cpu >= 0) {
+                    _instance.proxy = createProxyMiddleware({
+                        target: `https://${_instance.internal_ip}/`,
+                        logLevel: 'warn',
+                        onProxyRes: (proxyRes, req, res) => {
+                            proxyRes.headers['Server'] = 'WBalance by Welm 09/2023 ';
+                        },
+                    });
+                    return _instance;
+                }
+            }
+            return null;
+        };
+
+        const newInstances = await Promise.all(_instances.map(updateInstances));
+        instances = [...instances, ...newInstances.filter(Boolean)];
+
+        // Remover instâncias fantasmas
+        instances = instances.filter((instance) => {
+            return _instances.some((_instance) => _instance.id === instance.id);
+        });
+
+        // Atualizar uso da CPU e remover instâncias inválidas
+        const updateCpuUsage = async (instance) => {
+            instance.cpu = await api.Cpu(instance);
+            return instance.cpu >= 0 ? instance : null;
+        };
+
+        instances = await Promise.all(instances.map(updateCpuUsage)).then((results) => results.filter(Boolean));
+
+        // Cálculo da CPU
+        const cpuUsageSum = instances.reduce((sum, instance) => sum + instance.cpu, 0);
+        const cpuUsageAverage = Math.round(cpuUsageSum / instances.length);
+
+        // Lógica para criar ou destruir instâncias baseada no uso da CPU
+        if (cpuUsageAverage >= 80 && instances.length < process.env.INSTANCES_MAX) {
+            InstancesController.Create();
+        } else if (cpuUsageAverage < 40 && instances.length > process.env.INSTANCES_MIN) {
+            const lastInstance = instances.pop();
+            InstancesController.Destroy(lastInstance.id);
+        }
+    } catch (error) {
+        console.error(error);
+    }
 }
