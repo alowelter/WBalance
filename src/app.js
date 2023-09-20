@@ -190,7 +190,7 @@ app.use(async (req, res, next) => {
 
 setInterval(async () => {
     await serverImprove();
-}, 10 * 1000); // 1 minuto
+}, 10 * 1000);
 
 async function serverImprove() {
     try {
