@@ -201,7 +201,6 @@ async function serverImprove() {
 
         const updateInstances = async (_instance) => {
             if (_instance.status !== 'active') {
-                console.log('...addprepare 2', _instance.internal_ip);
                 instancesPrepare.push(_instance);
                 return null;
             }
@@ -220,7 +219,6 @@ async function serverImprove() {
                     });
                     return _instance;
                 } else {
-                    console.log('...addprepare 2', _instance.internal_ip);
                     instancesPrepare.push(_instance);
                 }
             }
@@ -251,7 +249,7 @@ async function serverImprove() {
 
         // Lógica para criar ou destruir instâncias baseada no uso da CPU
         const currentTime = Date.now();
-        if (!poolInStancesRefreshTime || currentTime - poolInStancesRefreshTime >= 3 * 60 * 1000) {
+        if (!poolInStancesRefreshTime || currentTime - poolInStancesRefreshTime >= 1 * 60 * 1000) {
             if (cpuUsageAverage >= 80 && instances.length < process.env.INSTANCES_MAX && instancesPrepare.length <= 0) {
                 InstancesController.Create();
                 console.log('🔵 Criando instancia');

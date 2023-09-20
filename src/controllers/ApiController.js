@@ -60,6 +60,7 @@ exports.Cpu = (instance) => {
             }
         })
         .catch((err) => {
+            console.log('⭕', instance.internal_ip, '[Inicializando]');
             return -1;
         });
 };
