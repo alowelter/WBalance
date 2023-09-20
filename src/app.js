@@ -75,7 +75,7 @@ http.createServer(app).listen(3001, () => {
 // Next server index
 let currIndex = 0;
 // Get next server
-function getServer() {
+function getServer(call = 0) {
     try {
         if (!instances || instances.length < 1) {
             return null;
@@ -85,9 +85,13 @@ function getServer() {
         currIndex = (currIndex + 1) % instances.length;
 
         // if instace.active not active get another
-        if (instances[currIndex].status != 'active' || instances[currIndex]?.cpu > 80) {
-            return getServer();
+        if (instances[currIndex].status != 'active') {
+            return getServer(call + 1);
         }
+        if (instances[currIndex]?.cpu > 80 && call < instances.length) {
+            return getServer(call + 1);
+        }
+
         return instances[currIndex];
     } catch (error) {
         console.log('🔴 Erro ao obtendo instancia.', error, instances);
