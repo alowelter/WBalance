@@ -243,7 +243,7 @@ async function serverImprove() {
 
         // Lógica para criar ou destruir instâncias baseada no uso da CPU
         const currentTime = Date.now();
-        if (!poolInStancesRefreshTime || currentTime - poolInStancesRefreshTime >= 5 * 60 * 1000) {
+        if (!poolInStancesRefreshTime || currentTime - poolInStancesRefreshTime >= 3 * 60 * 1000) {
             if (cpuUsageAverage >= 80 && instances.length < process.env.INSTANCES_MAX) {
                 InstancesController.Create();
             } else if (cpuUsageAverage < 40 && instances.length > process.env.INSTANCES_MIN) {
