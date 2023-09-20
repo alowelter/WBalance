@@ -176,6 +176,9 @@ app.post('/deploy', async (req, res, next) => {
 app.get('/add-instance', async (req, res, next) => {
     return await InstancesController.Create(req, res, next);
 });
+app.get('/plans', async (req, res, next) => {
+    return await InstancesController.Plans(req, res, next);
+});
 
 app.use(async (req, res, next) => {
     const target = getServer();
