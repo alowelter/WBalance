@@ -13,9 +13,6 @@ const axios = require('axios');
 require('dotenv').config();
 process.env.TZ = 'America/Sao_Paulo';
 
-// registrador para evitar overload de criação e destruição de instancias
-let poolInStancesRefreshTime = Date.now();
-
 // Cors
 app.use(cors());
 
@@ -34,7 +31,11 @@ const api = require('./controllers/ApiController');
 
 // handles
 let instances = [];
+let instancesPrepare = [];
 let loadbalance = null;
+// registrador para evitar overload de criação e destruição de instancias
+let poolInStancesRefreshTime = Date.now();
+
 if (os.platform() != 'linux') {
     console.log('🔴 Sistema deve ser linux');
     return;
@@ -185,6 +186,7 @@ app.use(async (req, res, next) => {
 
 async function serverImprove() {
     try {
+        instancesPrepare = [];
         const response = await api.instances();
 
         if (response.status !== 200) return;
@@ -198,12 +200,16 @@ async function serverImprove() {
         }
 
         const updateInstances = async (_instance) => {
-            if (_instance.status !== 'active') return null;
+            if (_instance.status !== 'active') {
+                instancesPrepare.push(_instance);
+                return null;
+            }
 
             const found = instances.find((instance) => instance.id === _instance.id);
 
             if (!found) {
                 _instance.cpu = await api.Cpu(_instance);
+                console.log('⭕', _instance.internal_ip, _instance.cpu);
 
                 if (_instance.cpu >= 0) {
                     _instance.proxy = createProxyMiddleware({
@@ -216,6 +222,7 @@ async function serverImprove() {
                     return _instance;
                 }
             }
+            instancesPrepare.push(_instance);
             return null;
         };
 
@@ -239,7 +246,7 @@ async function serverImprove() {
         const cpuUsageSum = instances.reduce((sum, instance) => sum + instance.cpu, 0);
         const cpuUsageAverage = Math.round(cpuUsageSum / instances.length);
 
-        console.log(`🔹 [Instances: ${instances.length}] - [CPU total: ${cpuUsageAverage}%]`);
+        console.log(`🔹 [Instances: ${instances.length}] - [CPU total: ${cpuUsageAverage}%] - [Criando: ${instancesPrepare.length}]`);
 
         // Lógica para criar ou destruir instâncias baseada no uso da CPU
         const currentTime = Date.now();

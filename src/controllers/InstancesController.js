@@ -115,7 +115,6 @@ runcmd:
   - mount -t nfs 10.43.96.3:/etc/letsencrypt /etc/letsencrypt
   - echo "10.43.96.3:/storage /usr/share/nginx nfs defaults 0 0" >> /etc/fstab
   - echo "10.43.96.3:/etc/letsencrypt /etc/letsencrypt nfs defaults 0 0" >> /etc/fstab
-  - echo "session.save_path = \"/usr/share/nginx/session\"" >> /etc/php.ini
   - firewall-cmd --zone=public --add-service=http --permanent
   - firewall-cmd --zone=public --add-service=https --permanent
   - firewall-cmd --zone=public --add-port=80/tcp --permanent
