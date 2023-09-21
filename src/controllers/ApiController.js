@@ -43,15 +43,14 @@ exports.loadbalance = async (req, res) => {
 
 exports.GetCpu = async (instance) => {
     try {
-        const oids = [
-            '1.3.6.1.4.1.2021.11.11.0', // CPU Idle Time
-        ];
+        cpuIdle = '1.3.6.1.4.1.2021.11.11.0'; // CPU Idle Time
         const session = snmp.createSession(instance.internal_ip, 'wbalance');
-        session.get(oids, function (error, varbinds) {
+        session.get([cpuIdle], function (error, varbinds) {
             if (error) {
                 console.error('xxxx', error);
                 return -1;
             } else {
+                console.log('=====', varbinds);
                 for (let i = 0; i < varbinds.length; i++) {
                     if (snmp.isVarbindError(varbinds[i])) {
                         console.error(snmp.varbindError(varbinds[i]));
