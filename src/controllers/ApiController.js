@@ -1,4 +1,6 @@
 const axios = require('axios');
+const snmp = require('net-snmp');
+
 require('dotenv').config();
 
 exports.Get = async (url) => {
@@ -37,6 +39,30 @@ exports.loadbalance = async (req, res) => {
             Authorization: `Bearer ${process.env.VULTR_API_KEY}`,
         },
     });
+};
+
+exports.GetCpu = async (instance) => {
+    const oids = ['1.3.6.1.2.1.1.3.0']; // OID para o uptime do sistema
+    try {
+        instance.snmp.get(oids, function (error, varbinds) {
+            if (error) {
+                console.error('xxxx', error);
+                return -1;
+            } else {
+                for (let i = 0; i < varbinds.length; i++) {
+                    if (snmp.isVarbindError(varbinds[i])) {
+                        console.error(snmp.varbindError(varbinds[i]));
+                    } else {
+                        console.log(varbinds[i].oid + ' = ' + varbinds[i].value);
+                    }
+                }
+            }
+            session.close();
+        });
+    } catch (error) {
+        console.log('⭕', instance.internal_ip, '[Inicializando]');
+        return -1;
+    }
 };
 
 exports.Cpu = (instance) => {

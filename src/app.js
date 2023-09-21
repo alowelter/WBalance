@@ -2,10 +2,11 @@ const http = require('http');
 const https = require('https');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const fs = require('fs');
-const os = require('os');
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const os = require('os');
+const snmp = require('net-snmp');
 
 const axios = require('axios');
 
@@ -212,6 +213,7 @@ async function serverImprove() {
 
         const updateInstances = async (_instance) => {
             if (_instance.status !== 'active') {
+                _instance.snmp = snmp.createSession(_instance.internal_ip, 'wbalance');
                 instancesPrepare.push(_instance);
                 return null;
             }
@@ -219,6 +221,8 @@ async function serverImprove() {
             const found = instances.find((instance) => instance.id === _instance.id);
 
             if (!found) {
+                let sss = await api.GetCpu(_instance);
+                console.log('####', sss);
                 _instance.cpu = await api.Cpu(_instance);
                 if (_instance.cpu >= 0) {
                     _instance.proxy = createProxyMiddleware({
