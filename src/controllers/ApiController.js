@@ -51,7 +51,7 @@ exports.GetCpu = async (instance) => {
                 return -1;
             } else {
                 let oidCpu = varbinds.find((varbind) => varbind.oid == cpuIdle);
-                console.log('!!!', oidCpu);
+                console.log('!!!', oidCpu.value);
                 return 100 - oidCpu.value;
             }
             session.close();
