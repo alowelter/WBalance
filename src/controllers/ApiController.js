@@ -45,7 +45,7 @@ exports.GetCpu = async (instance) => {
     const oids = ['1.3.6.1.2.1.1.3.0']; // OID para o uptime do sistema
     try {
         const session = snmp.createSession(instance.internal_ip, 'wbalance');
-        instance.snmp.get(oids, function (error, varbinds) {
+        session.get(oids, function (error, varbinds) {
             if (error) {
                 console.error('xxxx', error);
                 return -1;
