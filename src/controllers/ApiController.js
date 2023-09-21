@@ -48,12 +48,11 @@ exports.GetCpu = async (instance) => {
             const session = snmp.createSession(instance.internal_ip, 'wbalance');
             session.get([cpuIdle], function (error, varbinds) {
                 if (error) {
-                    console.error('xxxx', error);
                     reject(-1);
                 } else {
                     const oidCpu = varbinds.find((varbind) => varbind.oid === cpuIdle);
                     const cpuUsage = 100 - oidCpu.value;
-                    console.log('!!!', cpuUsage);
+                    console.log('!!!', instance.internal_ip, cpuUsage);
                     resolve(cpuUsage);
                 }
                 session.close();
