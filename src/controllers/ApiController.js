@@ -45,14 +45,14 @@ exports.GetCpu = async (instance) => {
     try {
         cpuIdle = '1.3.6.1.4.1.2021.11.11.0'; // CPU Idle Time
         const session = snmp.createSession(instance.internal_ip, 'wbalance');
-        session.get([cpuIdle], function (error, varbinds) {
+        return session.get([cpuIdle], function (error, varbinds) {
             if (error) {
                 console.error('xxxx', error);
                 return -1;
             } else {
                 let oidCpu = varbinds.find((varbind) => varbind.oid == cpuIdle);
-                console.log('!!!', oidCpu.value);
                 let cpuUsage = 100 - oidCpu.value;
+                console.log('!!!', cpuUsage);
                 return cpuUsage;
             }
             session.close();
