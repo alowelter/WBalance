@@ -221,7 +221,6 @@ async function serverImprove() {
 
             if (!found) {
                 let sss = await api.GetCpu(_instance);
-                console.log('####', sss);
                 _instance.cpu = await api.GetCpu(_instance);
                 //_instance.cpu = await api.Cpu(_instance);
                 if (_instance.cpu >= 0) {
