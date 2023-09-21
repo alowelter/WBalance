@@ -19,6 +19,7 @@ packages:
   - php-json 
   - php-intl
   - nfs-utils
+  - net-snmp
   
 write_files:
 - content: |
@@ -120,7 +121,11 @@ runcmd:
   - firewall-cmd --zone=public --add-service=https --permanent
   - firewall-cmd --zone=public --add-port=80/tcp --permanent
   - firewall-cmd --zone=public --add-port=443/tcp --permanent
+  - firewall-cmd --add-port=161/udp --permanent
   - firewall-cmd --reload
+  - echo rocommunity wbalance >> /etc/snmp/snmpd.conf
+  - systemctl enable snmpd
+  - systemctl start snmpd  
   - systemctl enable nginx
   - systemctl enable php-fpm
   - systemctl start nginx

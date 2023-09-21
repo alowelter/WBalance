@@ -268,7 +268,7 @@ async function serverImprove() {
         if (!poolInStancesRefreshTime || currentTime - poolInStancesRefreshTime >= 1 * 60 * 1000) {
             if (cpuUsageAverage >= 80 && instances.length < process.env.INSTANCES_MAX && instancesPrepare.length <= 0) {
                 InstancesController.Create();
-            } else if ((cpuUsageAverage < 40 && instances.length > process.env.INSTANCES_MIN) || instances.length > process.env.INSTANCES_MAX) {
+            } else if ((cpuUsageAverage < 20 && instances.length > process.env.INSTANCES_MIN) || instances.length > process.env.INSTANCES_MAX) {
                 const lastInstance = instances.pop();
                 InstancesController.Destroy(lastInstance.id);
             }
