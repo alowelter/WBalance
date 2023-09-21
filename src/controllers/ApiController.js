@@ -50,17 +50,13 @@ exports.GetCpu = async (instance) => {
                 console.error('xxxx', error);
                 return -1;
             } else {
-                if (snmp.isVarbindError(varbinds[i])) {
-                    console.log('⭕', instance.internal_ip, '[Inicializando 🟣]');
-                    return -1;
-                }
                 let oidCpu = varbinds.find((varbind) => varbind.oid == cpuIdle);
                 return 100 - oidCpu.value;
             }
             session.close();
         });
     } catch (error) {
-        console.log('⭕', instance.internal_ip, '[Inicializando 🟤]');
+        console.log('⭕', instance.internal_ip, '[Inicializando]');
         return -1;
     }
 };
