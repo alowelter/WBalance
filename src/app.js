@@ -213,7 +213,6 @@ async function serverImprove() {
 
         const updateInstances = async (_instance) => {
             if (_instance.status !== 'active') {
-                _instance.snmp = snmp.createSession(_instance.internal_ip, 'wbalance');
                 instancesPrepare.push(_instance);
                 return null;
             }
