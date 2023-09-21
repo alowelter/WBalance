@@ -48,7 +48,7 @@ exports.GetCpu = async (instance) => {
             const session = snmp.createSession(instance.internal_ip, 'wbalance');
             session.get([cpuIdle], function (error, varbinds) {
                 if (error) {
-                    reject(-1);
+                    resolve(-1);
                 } else {
                     const oidCpu = varbinds.find((varbind) => varbind.oid === cpuIdle);
                     const cpuUsage = 100 - oidCpu.value;
@@ -59,7 +59,7 @@ exports.GetCpu = async (instance) => {
             });
         } catch (error) {
             console.log('⭕', instance.internal_ip, '[Inicializando]');
-            reject(-1);
+            resolve(-1);
         }
     });
 };
