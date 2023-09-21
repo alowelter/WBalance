@@ -42,26 +42,27 @@ exports.loadbalance = async (req, res) => {
 };
 
 exports.GetCpu = async (instance) => {
-    try {
-        cpuIdle = '1.3.6.1.4.1.2021.11.11.0'; // CPU Idle Time
-        const session = snmp.createSession(instance.internal_ip, 'wbalance');
-        let cpuUsage = -1;
-        await session.get([cpuIdle], function (error, varbinds) {
-            if (error) {
-                console.error('xxxx', error);
-                return -1;
-            } else {
-                let oidCpu = varbinds.find((varbind) => varbind.oid == cpuIdle);
-                cpuUsage = 100 - oidCpu.value;
-            }
-            session.close();
-        });
-        console.log('!!!', cpuUsage);
-        return cpuUsage;
-    } catch (error) {
-        console.log('⭕', instance.internal_ip, '[Inicializando]');
-        return -1;
-    }
+    return new Promise((resolve, reject) => {
+        try {
+            const cpuIdle = '1.3.6.1.4.1.2021.11.11.0'; // CPU Idle Time
+            const session = snmp.createSession(instance.internal_ip, 'wbalance');
+            session.get([cpuIdle], function (error, varbinds) {
+                if (error) {
+                    console.error('xxxx', error);
+                    reject(-1);
+                } else {
+                    const oidCpu = varbinds.find((varbind) => varbind.oid === cpuIdle);
+                    const cpuUsage = 100 - oidCpu.value;
+                    console.log('!!!', cpuUsage);
+                    resolve(cpuUsage);
+                }
+                session.close();
+            });
+        } catch (error) {
+            console.log('⭕', instance.internal_ip, '[Inicializando]');
+            reject(-1);
+        }
+    });
 };
 
 exports.Cpu = (instance) => {
