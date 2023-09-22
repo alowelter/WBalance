@@ -222,7 +222,6 @@ async function serverImprove() {
             if (!found) {
                 let sss = await api.GetCpu(_instance);
                 _instance.cpu = await api.GetCpu(_instance);
-                //_instance.cpu = await api.Cpu(_instance);
                 if (_instance.cpu >= 0) {
                     _instance.proxy = createProxyMiddleware({
                         target: `https://${_instance.internal_ip}/`,
@@ -250,7 +249,6 @@ async function serverImprove() {
         // Atualizar uso da CPU e remover instâncias inválidas
         const updateCpuUsage = async (instance) => {
             instance.cpu = await api.GetCpu(instance);
-            //instance.cpu = await api.Cpu(instance);
             if (instance.cpu < 0 && instances.length < 2) {
                 instance.cpu = 100;
                 return instance;

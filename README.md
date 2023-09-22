@@ -2,58 +2,56 @@
 Welm Load Balance
 
 
-# configuracao do LoadBalance
+# configuracao do LoadBalance usando cloud-config
 
-echo SELINUX=disabled > /etc/selinux/config
-reboot
+#cloud-config
 
-groupadd -g 980 nginx
-useradd -u 980 -g 980 -d /storage -m nginx
-mkdir /storage
-chown nginx:nginx /storage
+packages:
+  - vsftpd
+  - nodejs
+  - nfs-utils
+  - certbot
 
-dnf install vsftpd -y
+write_files:
+- content: |
+    SELINUX=disabled
+  path: /etc/selinux/config
 
-echo > /etc/vsftpd/vsftpd.conf
-echo anonymous_enable=NO >> /etc/vsftpd/vsftpd.conf
-echo local_enable=YES >> /etc/vsftpd/vsftpd.conf
-echo write_enable=YES >> /etc/vsftpd/vsftpd.conf
-echo local_umask=022 >> /etc/vsftpd/vsftpd.conf
-echo dirmessage_enable=YES >> /etc/vsftpd/vsftpd.conf
-echo xferlog_enable=YES >> /etc/vsftpd/vsftpd.conf
-echo connect_from_port_20=YES >> /etc/vsftpd/vsftpd.conf
-echo xferlog_std_format=YES >> /etc/vsftpd/vsftpd.conf
-echo listen=YES >> /etc/vsftpd/vsftpd.conf
-echo listen_ipv6=NO >> /etc/vsftpd/vsftpd.conf
-echo pam_service_name=vsftpd >> /etc/vsftpd/vsftpd.conf
-echo userlist_enable=YES >> /etc/vsftpd/vsftpd.conf
-echo chroot_local_user=YES >> /etc/vsftpd/vsftpd.conf
-echo allow_writeable_chroot=YES >> /etc/vsftpd/vsftpd.conf
-echo local_root=/storage >> /etc/vsftpd/vsftpd.conf
+write_files:
+- content: |
+    echo anonymous_enable=NO
+    echo local_enable=YES
+    echo write_enable=YES
+    local_umask=022
+    dirmessage_enable=YES
+    xferlog_enable=YES
+    connect_from_port_20=YES
+    xferlog_std_format=YES
+    listen=YES
+    listen_ipv6=NO
+    pam_service_name=vsftpd
+    userlist_enable=YES
+    chroot_local_user=YES
+    allow_writeable_chroot=YES
+    local_root=/storage
+  path: /etc/vsftpd/vsftpd.conf
 
-systemctl restart vsftpd
-systemctl enable vsftpd
-
-dnf install nfs-utils -y
-echo /storage 10.43.96.0/24\(rw,sync,no_root_squash\) > /etc/exports
-systemctl enable --now rpcbind nfs-server
-firewall-cmd --add-service={nfs,nfs3,mountd,rpc-bind, http, https, ftp}
-firewall-cmd --runtime-to-permanent
-firewall-cmd --reload
-
-dnf install nodejs -y
-npm install pm2 -g
-cd /
-git clone https://github.com/alowelter/WBalance.git
-cd WBalance
-npm install
-
-dnf install certbot -y
-certbot certonly --standalone --email marcelo@alolwelter.com.br --agree-tos -d example.com
-
-
-pm2 start pm2.json
-
-
-
-
+runcmd:
+  - setenforce 0
+  - groupadd -g 980 nginx
+  - useradd -u 980 -g 980 -d /storage -m nginx
+  - chown nginx:nginx /storage
+  - mkdir /storage
+  - echo /storage 10.43.96.0/24\(rw,sync,no_root_squash\) > /etc/exports
+  - exportfs -a
+  - systemctl enable vsftpd
+  - systemctl restart vsftpd
+  - cd / && git clone https://github.com/alowelter/WBalance.git
+  - cd /WBalance && npm install
+  - npm install pm2 -g
+  - systemctl enable --now rpcbind nfs-server
+  - firewall-cmd --add-service={nfs,nfs3,mountd,rpc-bind, http, https, ftp}
+  - firewall-cmd --runtime-to-permanent
+  - firewall-cmd --reload
+  - certbot certonly --standalone --email marcelo@alolwelter.com.br --agree-tos -d example.com
+  - cd /WBalance && pm2 start pm2.json && pm2 startup && pm2 save

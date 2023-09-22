@@ -6,6 +6,7 @@
     "exec_mode": "cluster",
     "ignore_watch" : ["node_modules", "sqlite", ".git"],
     "log_rotate_size": "100M",
+    "interpreter": "bun",
     "watch_options": {
         "followSymlinks": true,
         "awaitWriteFinish": {

@@ -63,29 +63,3 @@ exports.GetCpu = async (instance) => {
         }
     });
 };
-
-exports.Cpu = (instance) => {
-    return axios
-        .get(`http://${instance.internal_ip}/cpu.php`)
-        .then((response) => {
-            if (response.status == 200) {
-                const cpuUsageMatch = response.data.match(/CPU:(\d+)%/);
-                let cpuUsage = -1;
-                if (cpuUsageMatch && cpuUsageMatch[1]) {
-                    cpuUsage = parseInt(cpuUsageMatch[1], 10);
-                    if (cpuUsage > 100) cpuUsage = 100;
-                    if (cpuUsage < 1) puUsage = 1;
-                }
-                //console.log('⭕', instance.internal_ip, cpuUsage, '%');
-
-                return cpuUsage;
-            } else {
-                console.log('⭕', instance.internal_ip, '[Inicializando]');
-                return -1;
-            }
-        })
-        .catch((err) => {
-            console.log('⭕', instance.internal_ip, '[Inicializando]');
-            return -1;
-        });
-};
