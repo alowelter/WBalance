@@ -58,7 +58,7 @@ exports.GetCpu = async (instance) => {
                 session.close();
             });
         } catch (error) {
-            console.log('⭕', instance.internal_ip, '[Inicializando]');
+            console.log('⭕', instance.internal_ip, '[Inicializando]', error);
             resolve(-1);
         }
     });
