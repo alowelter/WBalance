@@ -66,8 +66,11 @@ if (fs.existsSync(`/etc/letsencrypt/live/${process.env.BASEURL}/privkey.pem`)) {
     });
 }
 
-http.createServer(app).listen(3001, () => {
-    console.log('🟢 HTTP Running - Port 3001');
+http.createServer((req, res) => {
+    res.writeHead(301, { Location: 'https://' + req.headers['host'] + req.url });
+    res.end();
+}).listen(80, () => {
+    console.log('🟢 HTTP Running - Port 80');
 });
 
 // -----------------------------------------------------
@@ -258,7 +261,7 @@ async function serverImprove() {
 
         instances = await Promise.all(instances.map(updateCpuUsage)).then((results) => results.filter(Boolean));
 
-        // Cálculo da CPU
+        // Cálculo da CP
         const cpuUsageSum = instances.reduce((sum, instance) => sum + instance.cpu, 0);
         const cpuUsageAverage = Math.round(cpuUsageSum / instances.length);
         const lbcpu = await getCpuUsage();
